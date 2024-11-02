@@ -54,6 +54,14 @@ class Game:
 
         return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
 
+
+    def powerUp(self):
+        playerXPos, playerYPos = self.player.tilex, self.player.tiley
+        if tile_map.tile_map[playerYPos][playerXPos] == 'k':
+            self.pickUpPowerUp(playerYPos, playerXPos)
+
+
+
     def lavaBlock(self):
         value = 0
         lavaTile = [[0, 0] for _ in range(88)]
@@ -86,10 +94,12 @@ class Game:
             self.player.moveDown()
         if keys[pygame.K_SPACE]:
             for agent in self.agent_group:
-                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
+                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley and self.powerUpIndex == constants.KNIFE:
                     candy_stolen = agent.candy // 5
                     agent.candy -= candy_stolen
                     self.player.candy += candy_stolen
+                    self.powerUpIndex = -1
+                    
 
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
@@ -216,6 +226,7 @@ class Game:
             self.handleEvent()
             self.createVignetteEffect()
             self.valuables_UI()
+            self.powerUp()
             pygame.display.flip()
 
     def drawTileMap(self):
