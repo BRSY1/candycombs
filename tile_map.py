@@ -13,6 +13,6 @@ light_wall = pygame.transform.scale(light_wall, (config.TILE_SIZE, config.TILE_S
 
 tiles = {
     'a': light_wall,
-    'b': light_wall,
+    'b': dark_wall,
     '.': dark_wall
 }
