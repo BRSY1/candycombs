@@ -10,10 +10,16 @@ class Agent(player.Player):
         self.grid = [[0 for i in range(11)] for j in range(11)]
 
     def updateGrid(self):
-        self.grid = tile_map.tile_map[self.y-5:self.y+5, self.x-5:self.x+5]
-        print(self.grid)
-        
+        # print(self.tilex, self.tiley)
+        self.grid = []
+        self.tmp = tile_map.tile_map[self.tiley-6:self.tiley+5]
+        for i in range(11):
+            self.grid.append(self.tmp[i][self.tilex-5:self.tilex+5])
+        # print(self.grid, '\n')
+
     def update(self):
+        self.updateGrid()
+
         self.speedx += random.choice([-1, 0, 1])
         self.speedy += random.choice([-1, 0, 1])
 
