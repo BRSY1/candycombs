@@ -215,7 +215,7 @@ class Map:
         for room in self.rooms:
             for i in range(room.left, room.right):
                 for j in range(room.top, room.bottom):
-                    self.grid[i][j] = "a"
+                    self.grid[i][j] = "p"
 
     def bresenhams(self,node1,node2):
         x1 = node1[0]
