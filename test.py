@@ -71,7 +71,6 @@ class Game:
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
-        print(lavaTile[0])
         for i in range(0,len(lavaTile)):
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 self.player.candy -= 5
