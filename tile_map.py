@@ -37,16 +37,16 @@ tiles = {
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
-    'e': light_wall, # easy block
-    'h': light_wall, # hard block
-    'm': light_wall, # med block
+    'e': light_wall, #easy
+    'm': light_wall, #med
+    'h': light_wall, #hard
     'p': light_wall,
-    't': chest_floor,
-    'l': light_wall, # lava block
-    '1': light_wall, # top left table
-    '2': light_wall, # top right table
-    '3': light_wall, # bottom left table
-    '4': light_wall, # bottom right table
+    'l': light_wall, #lava
     '.': dark_wall,
-    'k': candy_knife
+    't': chest_floor,
+    'k': candy_knife,
+    '1': light_wall, #top left
+    '2': light_wall, #top right
+    '3': light_wall, #bottom left
+    '4': light_wall #bottom right
 }
