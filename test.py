@@ -49,9 +49,11 @@ class Game:
         return (tile_map.tile_map[tiley][tilex] != '.'     )  # Check if the tile is walkable
 
     def move(self):
+
         # Store the previous position
         prevx = self.player.rect.x
         prevy = self.player.rect.y
+    
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -92,7 +94,7 @@ class Game:
         player_draw_x = config.SCREEN_WIDTH // 2 - self.player.rect.width // 2
         player_draw_y = config.SCREEN_HEIGHT // 2 - self.player.rect.height // 2
         self.screen.blit(self.player.image, (player_draw_x, player_draw_y))
-
+          # Draw rectangle outline with a width of 2 pixels
 
 
     def createVignetteEffect(self):
