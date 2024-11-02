@@ -5,7 +5,7 @@ import numpy
 import networkx
 
 class Room:
-    def __init__(self,x,y,length,width):
+    def __init__(self,x,y,length,width,type):
         self.x = x
         self.y = y
         self.length = length
@@ -14,6 +14,7 @@ class Room:
         self.left = self.x - (self.length//2)
         self.top = self.y - (self.width//2)
         self.bottom = self.y + self.width//2
+        self.type = type
     
     
     def get_center(self):
@@ -169,16 +170,20 @@ class Map:
 
 
     def initialise_rooms(self):
+        roomTypes = [1,1,1,1,2,2,3]
         self.central()
-        centralRoom = Room(self.center_x, self.center_y, self.room_length*2, self.room_width*2)
+        centralRoom = Room(self.center_x, self.center_y, self.room_length*2, self.room_width*2,0)
         self.rooms.append(centralRoom)
         max_attempts = 50  # Limit the number of placement attempts to avoid infinite loops
-        for _ in range(self.num_rooms):
+        for i in range(self.num_rooms):
             attempts = 0
             while attempts < max_attempts:
                 # Get a random position in the ellipse for the new room's center
                 x, y = self.get_random_point_in_ellipse(self.size // 8)
-                new_room = Room(x, y, self.room_length, self.room_width)
+                if i < 7:
+                    new_room = Room(x, y, self.room_length, self.room_width, roomTypes[i])
+                else:
+                    new_room = Room(x, y, self.room_length, self.room_width, 0)
                 
                 # Check if the new room overlaps any existing room
                 overlap = False
@@ -204,10 +209,45 @@ class Map:
         for room in self.rooms:
             for i in range(room.left, room.right):
                 for j in range(room.top, room.bottom):
-                    
                     random_number = random.randint(0,3)
                     self.grid[i][j] = self.floorTiles[random_number]
-            self.grid[room.x][room.y] = "t"
+            if room.type == 0: # Chest / Atrium
+                self.grid[room.x][room.y] = "t"
+            elif room.type == 1: # TOT
+                self.grid[room.x][room.y] = "t"
+                self.grid[room.x-1][room.y] = "l"
+                self.grid[room.x-1][room.y-1] = 'l'
+                self.grid[room.x][room.y-1] = 'l'
+
+                #horizontal parts
+                for i in range(0,6):
+                    self.grid[room.x-3][room.y-3+i] = 'l'
+                    self.grid[room.x+2][room.y-3+i] = 'l'
+
+                #vertical parts
+                for i in range(0,4):
+                    self.grid[room.x-2+i][room.y-3] = 'l'
+                    self.grid[room.x-2+i][room.y+2] = 'l'
+                
+                i = random.randint(1,4)
+                j = random.randint(1,4)
+                if i == 1:
+                    self.grid[room.x-3][room.y-3+j] = 'a'
+                elif i == 2:
+                    self.grid[room.x-3+j][room.y+2] = 'a'
+                elif i == 3:
+                    self.grid[room.x+2][room.y-3+j] = 'a'
+                elif i == 4:
+                    self.grid[room.x-3+j][room.y-3] = 'a'
+            elif room.type == 2: # TT
+                self.grid[room.x][room.y-2] = 'e'
+                self.grid[room.x][room.y] = 'm'
+                self.grid[room.x][room.y+2] = 'h'
+            elif room.type == 3: # GG
+                self.grid[room.x-1][room.y-1] = '1'
+                self.grid[room.x-1][room.y] = '2'
+                self.grid[room.x][room.y-1] = '3'
+                self.grid[room.x][room.y] = '4'
             
     def get_room_centers(self):
         centers=[]
@@ -312,7 +352,7 @@ class Map:
 
 def generate_map(array_size, num_rooms,room_length, room_width):
     myMap = Map(array_size,num_rooms,room_length,room_width)
-    centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2)
+    centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2, 0)
     myMap.initialise_rooms()
     myMap.connect_rooms(myMap.MST())
     myMap.add_rooms()

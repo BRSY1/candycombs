@@ -39,14 +39,19 @@ class Game:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
                     self.player.stop()
 
+                playerXPos, playerYPos = self.player.tilex, self.player.tiley
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                    self.openChest(playerYPos, playerXPos)
+
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'k':
+                    self.pickUpPowerUp(playerYPos, playerXPos)
+
     def is_walkable(self, tilex, tiley):
         # Check bounds
         if tiley < 0 or tiley >= len(tile_map.tile_map) or tilex < 0 or tilex >= len(tile_map.tile_map[0]):
             return False  # Out of bounds (collision)
 
-
-
-        return (tile_map.tile_map[tiley][tilex] != '.'     )  # Check if the tile is walkable
+        return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
 
     def move(self):
 
@@ -71,7 +76,6 @@ class Game:
                     agent.candy -= candy_stolen
                     self.player.candy += candy_stolen
 
-        
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
@@ -85,6 +89,7 @@ class Game:
             prevx = self.player.rect.x
             prevy = self.player.rect.y
 
+        # remove candies
         currPos = (self.player.tiley, self.player.tilex)
         if currPos in self.candies:
             self.player.candy += 1
@@ -94,8 +99,6 @@ class Game:
         player_draw_x = config.SCREEN_WIDTH // 2 - self.player.rect.width // 2
         player_draw_y = config.SCREEN_HEIGHT // 2 - self.player.rect.height // 2
         self.screen.blit(self.player.image, (player_draw_x, player_draw_y))
-          # Draw rectangle outline with a width of 2 pixels
-
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -151,6 +154,11 @@ class Game:
         #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
         #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
 
+    def getOffset(self):
+        offsetx = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
+        offsety = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
+        return offsetx, offsety
+
     def moveAgents(self):
         self.offsetx = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
         self.offsety = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
@@ -189,8 +197,7 @@ class Game:
             pygame.display.flip()
 
     def drawTileMap(self):
-        offset_x = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
-        offset_y = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
+        offset_x, offset_y = self.getOffset()
         
         self.screen.fill((100, 100, 100))
         for row_index, row in enumerate(tile_map.tile_map):
@@ -222,6 +229,12 @@ class Game:
             for col_index, tile_type in enumerate(row):
                 if tile_type not in ['.', 't'] and random.random() < 0.01:
                     self.candies.append((row_index, col_index))
+
+    def openChest(self, r, c):
+        tile_map.tile_map[r][c] = 'k'
+
+    def pickUpPowerUp(self, r, c):
+        tile_map.tile_map[r][c] = 'k'
 
 
 #def draw_bar(screen, coins_collected, max_coins):
