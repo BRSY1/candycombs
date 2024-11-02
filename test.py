@@ -75,20 +75,20 @@ class Game:
         remaining_time = end_time - current_time
 
         time_amount = 3
-        candy_collected = self.player.candy
+        candy_collected = 1000
         powerUp_index = 0
 
-        #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
-        #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
-        #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
+        candy_ui = pygame.image.load("assets/ui/candy.png")
+        scaled_candy_ui = pygame.transform.scale(candy_ui, (candy_ui.get_width() * 12, candy_ui.get_height() * 12)) 
+        self.screen.blit(scaled_candy_ui, (0,0))
 
         candy_image = pygame.image.load("assets/tiles/candy_orange.png")
         scaled_candy_image = pygame.transform.scale(candy_image, (candy_image.get_width() * 4, candy_image.get_height() * 4))
-        self.screen.blit(scaled_candy_image, (20,20))
+        self.screen.blit(scaled_candy_image, (2,2))
         
-        font_candy = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 100)
+        font_candy = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 90)
         text = font_candy.render(f"{candy_collected}", True, (255,165,0))
-        self.screen.blit(text, (160, 20))
+        self.screen.blit(text, (140, 0))
 
         if (remaining_time >=0):
             bar_width = ((remaining_time/countdown_time) * box_width) -4
@@ -101,6 +101,14 @@ class Game:
             font_countdown = pygame.font.Font(None, 40)
             text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
             self.screen.blit(text, ((config.SCREEN_WIDTH/2)-30, 50))
+
+        powerup_ui = pygame.image.load("assets/ui/powerup.png")
+        scaled_powerup_ui = pygame.transform.scale(powerup_ui, (powerup_ui.get_width() * 12, powerup_ui.get_height() * 12))
+        self.screen.blit(scaled_powerup_ui, (config.SCREEN_WIDTH-(32 * 12), 0))
+
+        #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
+        #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
+        #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
 
     def run(self):
         while self.is_running:

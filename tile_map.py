@@ -15,7 +15,7 @@ floor_split_cracked = pygame.image.load("assets/tiles/floor_split_cracked.png")
 floor_split_cracked = pygame.transform.scale(floor_split_cracked, (config.TILE_SIZE, config.TILE_SIZE))
 floor_split = pygame.image.load("assets/tiles/floor_split.png")
 floor_split = pygame.transform.scale(floor_split, (config.TILE_SIZE, config.TILE_SIZE))
-floor = pygame.image.load("assets/tiles/floor_split.png")
+floor = pygame.image.load("assets/tiles/floor.png")
 floor = pygame.transform.scale(floor, (config.TILE_SIZE, config.TILE_SIZE))
 
 dark_wall = pygame.image.load("assets/tiles/dark_wall.png")
@@ -31,7 +31,7 @@ tiles = {
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
-    'p': floor_split,
+    'p': light_wall,
     '.': dark_wall,
     't': chest_floor
 }
