@@ -32,6 +32,9 @@ candy = pygame.transform.scale(candy, (config.TILE_SIZE, config.TILE_SIZE))
 candy_knife = pygame.image.load("assets/tiles/candy_knife_floor.png")
 candy_knife = pygame.transform.scale(candy_knife, (config.TILE_SIZE, config.TILE_SIZE))
 
+lava = pygame.image.load("assets/tiles/lava.png")
+lava = pygame.transform.scale(lava, (config.TILE_SIZE, config.TILE_SIZE))
+
 tiles = {
     'a': floor_cracked,
     'b': floor_split_cracked,
@@ -41,7 +44,7 @@ tiles = {
     'm': light_wall, #med
     'h': light_wall, #hard
     'p': light_wall,
-    'l': light_wall, #lava
+    'l': lava, #lava
     '.': dark_wall,
     't': chest_floor,
     'k': candy_knife,
