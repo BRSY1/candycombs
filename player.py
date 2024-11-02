@@ -12,9 +12,10 @@ class Player(sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
 
-        self.facing_right = True
+        self.candy = 3
+        self.currentPowerup = 0
 
-        self.speed = 2
+        self.facing_right = True
 
 
     def moveLeft(self):
