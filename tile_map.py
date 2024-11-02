@@ -1,6 +1,7 @@
 import pygame
 import config
 import roomgen
+import constants
 
 myMap = roomgen.generate_map(100,16,8,8)
 
@@ -44,7 +45,12 @@ med = pygame.transform.scale(med, (config.TILE_SIZE, config.TILE_SIZE))
 hard = pygame.image.load("assets/tiles/hard.png")
 hard = pygame.transform.scale(hard, (config.TILE_SIZE, config.TILE_SIZE))
 
+candy_knife_ui = pygame.image.load("assets/items/candy_knife.png")
+candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
+powerUps = {
+    constants.KNIFE: candy_knife_ui
+}
 
 tiles = {
     'a': floor_cracked,
