@@ -26,7 +26,15 @@ class Player(sprite.Sprite):
         self.animate_speed = 0.1
         self.animate_frame = 0
         self.candy = 10
-    
+
+    def check_collision(self, prev_rect):
+        # Get the tile position based on the player's current rectangle position
+        new_tilex = self.rect.centerx // config.TILE_SIZE
+        new_tiley = self.rect.centery // config.TILE_SIZE
+
+
+
+
     def updateAnimation(self):
         if self.is_moving:
             self.animate_frame += self.animate_speed
