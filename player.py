@@ -1,20 +1,21 @@
 import pygame
 from pygame import sprite
 
+import config
+
 class Player(sprite.Sprite):
-    def __init__(self):
+    def __init__(self): 
         self.image = pygame.Surface((50, 50))
         self.image.fill((0, 128, 255))
         
-        self.rect = self.image.get_rect()
-        self.locationx, self.locationy = (100, 100)
+        self.rect = self.image.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2))
 
         self.speedx = 0
         self.speedy = 0
     
     def update(self):
-        self.locationx += self.speedx
-        self.locationy += self.speedy
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
 
     def moveLeft(self):
         self.speedx = -5

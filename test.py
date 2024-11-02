@@ -1,8 +1,10 @@
 import pygame
 import tile_map
+
 import constants
 import config
-import player
+import roomgen
+from player import Player
 
 
 class Game:
@@ -12,7 +14,9 @@ class Game:
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.player = player.Player()
+
+        self.player = Player()
+
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -35,24 +39,32 @@ class Game:
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     self.player.stopVertical()
 
-        self.player.update()
-        self.screen.blit(self.player.image, (self.player.locationx, self.player.locationy))
-
     def run(self):
         while self.is_running:
             self.clock.tick(config.FPS)
-            self.drawTileMap()
             self.handleEvent()
-            pygame.display.flip()
+
+            self.player.update()
+            self.drawTileMap()
+            self.drawPlayer()
+            pygame.display.flip() 
             
     def drawTileMap(self):
-        self.screen.fill((100, 100, 100))
+        offset_x = (config.SCREEN_WIDTH // 2) - (self.player.rect.centerx) 
+        offset_y = (config.SCREEN_HEIGHT // 2) - (self.player.rect.centery)
+
+        self.screen.fill((100, 100, 100))  # Fill the screen with a base color
+
+        # Draw the tile map with the calculated offsets
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
                 tile_image = tile_map.tiles[tile_type]
-                x = col_index * config.TILE_SIZE
-                y = row_index * config.TILE_SIZE
+                x = col_index * config.TILE_SIZE + offset_x
+                y = row_index * config.TILE_SIZE + offset_y
                 self.screen.blit(tile_image, (x, y))
+
+    def drawPlayer(self):
+        self.screen.blit(self.player.image, self.player.rect)
 
 
 if __name__ == "__main__":
