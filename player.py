@@ -11,6 +11,8 @@ class Player(sprite.Sprite):
 
         self.speedx = 0
         self.speedy = 0
+
+        self.facing_right = True
     
     def update(self):
         self.locationx += self.speedx
@@ -18,9 +20,15 @@ class Player(sprite.Sprite):
 
     def moveLeft(self):
         self.speedx = -5
+        if self.facing_right == False:
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.facing_right = True
     
     def moveRight(self):
         self.speedx = 5
+        if self.facing_right == True:
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.facing_right = False
 
     def moveUp(self):
         self.speedy = -5
