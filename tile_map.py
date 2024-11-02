@@ -29,5 +29,6 @@ tiles = {
     'c': floor_split,
     'd': floor,
     'p': floor_split,
-    '.': dark_wall
+    '.': dark_wall,
+    't': dark_wall
 }

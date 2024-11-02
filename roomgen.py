@@ -358,8 +358,8 @@ def generate_map(array_size, num_rooms,room_length, room_width):
     myMap.add_rooms()
     myMap.connect_rooms(myMap.MST())
     myMap.add_treasure()
-    myMap.print_grid()
+    # myMap.print_grid()
     return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
-generate_map(100,16,8,8) 
+# generate_map(100,16,8,8) 

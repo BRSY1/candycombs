@@ -62,7 +62,7 @@ class Game:
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
         visionSurface.fill((0,0,0,240))
         center = (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2) 
-        for radius in range(config.VISION_RADIUS, 0, -50):
+        for radius in range(config.VISION_RADIUS, 0, -30):
             alpha = int(240 * (radius / config.VISION_RADIUS)) 
             pygame.draw.circle(visionSurface, (0,0,0,0 + alpha), center, radius)
         self.screen.blit(visionSurface, (0, 0))
