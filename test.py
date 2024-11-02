@@ -3,6 +3,7 @@ import tile_map
 import constants
 import config
 import player
+import random
 
 
 class Game:

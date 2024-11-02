@@ -111,7 +111,9 @@ class Map:
         for room in self.rooms:
             for i in range(room.left, room.right):
                 for j in range(room.top, room.bottom):
-                    self.grid[i][j] = "a"
+                    floorTiles = ["a","b","c","d"]
+                    random_number = random.randint(0,3)
+                    self.grid[i][j] = floorTiles[random_number]
             
     def get_room_centers(self):
         centers=[]
