@@ -15,7 +15,7 @@ floor_split_cracked = pygame.image.load("assets/tiles/floor_split_cracked.png")
 floor_split_cracked = pygame.transform.scale(floor_split_cracked, (config.TILE_SIZE, config.TILE_SIZE))
 floor_split = pygame.image.load("assets/tiles/floor_split.png")
 floor_split = pygame.transform.scale(floor_split, (config.TILE_SIZE, config.TILE_SIZE))
-floor = pygame.image.load("assets/tiles/floor_split.png")
+floor = pygame.image.load("assets/tiles/floor.png")
 floor = pygame.transform.scale(floor, (config.TILE_SIZE, config.TILE_SIZE))
 
 dark_wall = pygame.image.load("assets/tiles/dark_wall.png")
@@ -26,12 +26,27 @@ light_wall = pygame.transform.scale(light_wall, (config.TILE_SIZE, config.TILE_S
 chest_floor = pygame.image.load("assets/tiles/chest_floor.png")
 chest_floor = pygame.transform.scale(chest_floor, (config.TILE_SIZE, config.TILE_SIZE))
 
+candy = pygame.image.load("assets/tiles/candy_orange.png")
+candy = pygame.transform.scale(candy, (config.TILE_SIZE, config.TILE_SIZE))
+
+candy_knife = pygame.image.load("assets/tiles/candy_knife_floor.png")
+candy_knife = pygame.transform.scale(candy_knife, (config.TILE_SIZE, config.TILE_SIZE))
+
 tiles = {
     'a': floor_cracked,
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
-    'p': floor_split,
+    'e': light_wall, #easy
+    'm': light_wall, #med
+    'h': light_wall, #hard
+    'p': light_wall,
+    'l': light_wall, #lava
     '.': dark_wall,
-    't': chest_floor
+    't': chest_floor,
+    'k': candy_knife,
+    '1': light_wall, #top left
+    '2': light_wall, #top right
+    '3': light_wall, #bottom left
+    '4': light_wall #bottom right
 }

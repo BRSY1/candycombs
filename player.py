@@ -20,6 +20,9 @@ class Player(sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
 
+        self.tilex = (self.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+        self.tiley = (self.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+
         self.facing_right = True
         self.is_moving = False
         self.animate_speed = 0.1

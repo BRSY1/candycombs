@@ -26,6 +26,9 @@ class Game:
         
         self.offsetx = 0
         self.offsety = 0
+        self.candyGenerationCounter = 0
+        self.lastCandyGenerationTime = 0
+        self.candies = []
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -36,7 +39,22 @@ class Game:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
                     self.player.stop()
 
+                playerXPos, playerYPos = self.player.tilex, self.player.tiley
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                    self.openChest(playerYPos, playerXPos)
+
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'k':
+                    self.pickUpPowerUp(playerYPos, playerXPos)
+
+    def is_walkable(self, tilex, tiley):
+        # Check bounds
+        if tiley < 0 or tiley >= len(tile_map.tile_map) or tilex < 0 or tilex >= len(tile_map.tile_map[0]):
+            return False  # Out of bounds (collision)
+
+        return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
+
     def move(self):
+        # Store the previous position
         prevx = self.player.rect.x
         prevy = self.player.rect.y
 
@@ -49,15 +67,36 @@ class Game:
             self.player.moveUp()
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
-        
-        new_tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
-        new_tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+        if keys[pygame.K_SPACE]:
+            for agent in self.agent_group:
+                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
+                    candy_stolen = agent.candy // 5
+                    agent.candy -= candy_stolen
+                    self.player.candy += candy_stolen
 
-        if tile_map.tile_map[new_tiley][new_tilex] == '.':
+        self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+        self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+
+        # Check for collision with walls
+        if not self.is_walkable(self.player.tilex, self.player.tiley):
+            # Revert to previous position if not walkable
             self.player.rect.x = prevx
             self.player.rect.y = prevy
+        else:
+            # If the position is walkable, update the previous position
+            prevx = self.player.rect.x
+            prevy = self.player.rect.y
 
-        self.screen.blit(self.player.image, (config.SCREEN_WIDTH // 2 - 64 , config.SCREEN_HEIGHT // 2 - 64))
+        # remove candies
+        currPos = (self.player.tiley, self.player.tilex)
+        if currPos in self.candies:
+            self.player.candy += 1
+            self.candies.remove(currPos)
+
+        # Draw the player centered on the screen
+        player_draw_x = config.SCREEN_WIDTH // 2 - self.player.rect.width // 2
+        player_draw_y = config.SCREEN_HEIGHT // 2 - self.player.rect.height // 2
+        self.screen.blit(self.player.image, (player_draw_x, player_draw_y))
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -81,17 +120,17 @@ class Game:
         candy_collected = self.player.candy
         powerUp_index = 0
 
-        #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
-        #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
-        #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
+        candy_ui = pygame.image.load("assets/ui/candy.png")
+        scaled_candy_ui = pygame.transform.scale(candy_ui, (candy_ui.get_width() * 12, candy_ui.get_height() * 12)) 
+        self.screen.blit(scaled_candy_ui, (0,0))
 
         candy_image = pygame.image.load("assets/tiles/candy_orange.png")
         scaled_candy_image = pygame.transform.scale(candy_image, (candy_image.get_width() * 4, candy_image.get_height() * 4))
-        self.screen.blit(scaled_candy_image, (20,20))
+        self.screen.blit(scaled_candy_image, (2,2))
         
-        font_candy = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 100)
+        font_candy = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 90)
         text = font_candy.render(f"{candy_collected}", True, (255,165,0))
-        self.screen.blit(text, (160, 20))
+        self.screen.blit(text, (140, 0))
 
         if (remaining_time >=0):
             bar_width = ((remaining_time/countdown_time) * box_width) -4
@@ -105,6 +144,19 @@ class Game:
             text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
             self.screen.blit(text, ((config.SCREEN_WIDTH/2)-30, 50))
 
+        powerup_ui = pygame.image.load("assets/ui/powerup.png")
+        scaled_powerup_ui = pygame.transform.scale(powerup_ui, (powerup_ui.get_width() * 12, powerup_ui.get_height() * 12))
+        self.screen.blit(scaled_powerup_ui, (config.SCREEN_WIDTH-(32 * 12), 0))
+
+        #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
+        #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
+        #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
+
+    def getOffset(self):
+        offsetx = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
+        offsety = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
+        return offsetx, offsety
+
     def moveAgents(self):
         self.offsetx = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
         self.offsety = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
@@ -114,14 +166,19 @@ class Game:
             prevy = agent.rect.y
             agent.update()
 
-            new_tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
-            new_tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+            agent.tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+            agent.tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
-            if tile_map.tile_map[new_tiley][new_tilex] == '.':
+            if tile_map.tile_map[agent.tiley][agent.tilex] == '.':
                 agent.speedx = 0
                 agent.speedy = 0
                 agent.rect.x = prevx
                 agent.rect.y = prevy
+            
+            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1:
+                candy_stolen = self.player.candy // 5
+                self.player.candy -= candy_stolen
+                agent.candy += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
@@ -138,6 +195,7 @@ class Game:
             pygame.display.flip()
 
     def drawTileMap(self):
+        offset_x, offset_y = self.getOffset()
         
         self.screen.fill((100, 100, 100))
         for row_index, row in enumerate(tile_map.tile_map):
@@ -146,6 +204,35 @@ class Game:
                 x = col_index * config.TILE_SIZE - self.offsetx
                 y = row_index * config.TILE_SIZE - self.offsety
                 self.screen.blit(tile_image, (x, y))
+
+        # regenerate candies
+        currentTime = pygame.time.get_ticks()
+        if (self.lastCandyGenerationTime == 0 or
+            (currentTime - self.lastCandyGenerationTime >= config.CANDY_GENERATION_RATE)
+        ):
+            self.candies.clear()
+            self.generateCandies()
+            self.lastCandyGenerationTime = currentTime
+
+        # render candies
+        if currentTime - self.lastCandyGenerationTime <= config.CANDY_DISPLAY_INTERVAL:
+            candy_image = tile_map.candy  
+            for pos in self.candies:
+                candy_x = pos[1] * config.TILE_SIZE - offset_x
+                candy_y = pos[0] * config.TILE_SIZE - offset_y
+                self.screen.blit(candy_image, (candy_x, candy_y))
+
+    def generateCandies(self):
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                if tile_type not in ['.', 't'] and random.random() < 0.01:
+                    self.candies.append((row_index, col_index))
+
+    def openChest(self, r, c):
+        tile_map.tile_map[r][c] = 'k'
+
+    def pickUpPowerUp(self, r, c):
+        tile_map.tile_map[r][c] = 'k'
 
 
 #def draw_bar(screen, coins_collected, max_coins):
