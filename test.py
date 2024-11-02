@@ -15,6 +15,9 @@ class Game:
         self.player = player.Player()
 
     def handleEvent(self):
+        prevx = self.player.locationx
+        prevy = self.player.locationy
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
@@ -34,6 +37,13 @@ class Game:
                     self.player.stopHorizontal()
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     self.player.stopVertical()
+        
+        new_tilex = self.player.locationx // config.TILE_SIZE
+        new_tiley = self.player.locationy // config.TILE_SIZE
+
+        if tile_map.tile_map[new_tiley][new_tilex] == '.':
+            self.player.locationx = prevx
+            self.player.locationy = prevy
 
         self.player.update()
         self.screen.blit(self.player.image, (self.player.locationx, self.player.locationy))
@@ -44,7 +54,7 @@ class Game:
             self.drawTileMap()
             self.handleEvent()
             pygame.display.flip()
-            
+    
     def drawTileMap(self):
         self.screen.fill((100, 100, 100))
         for row_index, row in enumerate(tile_map.tile_map):

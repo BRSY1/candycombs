@@ -7,7 +7,7 @@ class Player(sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (128, 128))
         
         self.rect = self.image.get_rect()
-        self.locationx, self.locationy = (100, 100)
+        self.locationx, self.locationy = 100, 100
 
         self.speedx = 0
         self.speedy = 0
