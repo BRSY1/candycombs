@@ -3,8 +3,8 @@ from pygame import sprite
 
 class Player(sprite.Sprite):
     def __init__(self):
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((0, 128, 255))
+        self.image = pygame.image.load("assets/mainCharacterFrames/mainCharacterStanding1.png")
+        self.image = pygame.transform.scale(self.image, (128, 128))
         
         self.rect = self.image.get_rect()
         self.locationx, self.locationy = (100, 100)
