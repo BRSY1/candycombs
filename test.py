@@ -3,6 +3,7 @@ import tile_map
 import constants
 import config
 import player
+import random
 
 
 class Game:
@@ -41,11 +42,11 @@ class Game:
         new_tilex = self.player.locationx // config.TILE_SIZE
         new_tiley = self.player.locationy // config.TILE_SIZE
 
+        self.player.update()
         if tile_map.tile_map[new_tiley][new_tilex] == '.':
             self.player.locationx = prevx
             self.player.locationy = prevy
 
-        self.player.update()
         self.screen.blit(self.player.image, (self.player.locationx, self.player.locationy))
 
     def run(self):
