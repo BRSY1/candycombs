@@ -41,7 +41,6 @@ class Game:
         new_tilex = (self.player.locationx + config.TILE_SIZE // 4) // config.TILE_SIZE
         new_tiley = (self.player.locationy + config.TILE_SIZE // 2) // config.TILE_SIZE
 
-        self.player.update()
         if tile_map.tile_map[new_tiley][new_tilex] == '.':
             self.player.locationx = prevx
             self.player.locationy = prevy
