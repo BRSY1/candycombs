@@ -62,10 +62,16 @@ class Game:
             self.player.moveUp()
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
+        if keys[pygame.K_SPACE]:
+            for agent in self.agent_group:
+                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
+                    candy_stolen = agent.candy // 5
+                    agent.candy -= candy_stolen
+                    self.player.candy += candy_stolen
 
-        # Store the new position
-        new_tilex = (self.player.rect.x + config.TILE_SIZE // 2) // config.TILE_SIZE
-        new_tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+        
+        self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+        self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
         # Check for collision with walls
         if not self.is_walkable(new_tilex, new_tiley):
@@ -77,8 +83,7 @@ class Game:
             prevx = self.player.rect.x
             prevy = self.player.rect.y
 
-        # Check for candy collision
-        currPos = (new_tiley, new_tilex)
+        currPos = (self.player.tiley, self.player.tilex)
         if currPos in self.candies:
             self.player.candy += 1
             self.candies.remove(currPos)
@@ -153,14 +158,19 @@ class Game:
             prevy = agent.rect.y
             agent.update()
 
-            new_tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
-            new_tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+            agent.tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+            agent.tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
-            if tile_map.tile_map[new_tiley][new_tilex] == '.':
+            if tile_map.tile_map[agent.tiley][agent.tilex] == '.':
                 agent.speedx = 0
                 agent.speedy = 0
                 agent.rect.x = prevx
                 agent.rect.y = prevy
+            
+            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1:
+                candy_stolen = self.player.candy // 5
+                self.player.candy -= candy_stolen
+                agent.candy += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
