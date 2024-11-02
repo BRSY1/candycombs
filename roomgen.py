@@ -96,6 +96,23 @@ class Map:
             room.updateBoundaries()
             room.updateCentre()
     
+    def mark_no_path_zones(self):
+        for room in self.rooms:
+            for i in range(room.left - 1, room.right + 2):
+                if 0 <= i < self.size:
+                    if 0 <= room.top - 1 < self.size:
+                        self.grid[i][room.top - 1] = "#"  # Mark above top edge
+                    if 0 <= room.bottom + 1 < self.size:
+                        self.grid[i][room.bottom + 1] = "#"  # Mark below bottom edge
+            for j in range(room.top - 1, room.bottom + 2):
+                if 0 <= j < self.size:
+                    if 0 <= room.left - 1 < self.size:
+                        self.grid[room.left - 1][j] = "#"  # Mark left of left edge
+                    if 0 <= room.right + 1 < self.size:
+                        self.grid[room.right + 1][j] = "#"  # Mark right of right edge
+
+
+
     def get_room_centers(self):
         centers=[]
         for room in self.rooms:
@@ -112,62 +129,32 @@ class Map:
         
         return (int(x + (self.size//2)),int(y + self.size//2))        
 
-    import math
 
+        
     def get_closest_side_midpoints(self, room1, room2):
-        # Get the side midpoints
+        # Get the midpoints of each side for both rooms
         room1_sides = room1.get_side_midpoints()
         room2_sides = room2.get_side_midpoints()
         
-        # Determine the direction from room1 to room2
-        dx = room2.x - room1.x
-        dy = room2.y - room1.y
-
-        angle_rad = math.atan2(dy, dx)
-        if angle_rad < 0:
-            angle_rad += 2 * math.pi
-
-        if 0 <= angle_rad < math.pi / 8:
-            return room1_sides["right"], room2_sides["left"]
+        # Initialize variables to keep track of the closest pair of midpoints
+        min_distance = float('inf')
+        closest_midpoints = (None, None)
         
-        elif math.pi / 8 <= angle_rad < math.pi / 4:
-            return room1_sides["right"], room2_sides["bottom"]
+        # Iterate over each side midpoint of room1 and room2
+        for side1, midpoint1 in room1_sides.items():
+            for side2, midpoint2 in room2_sides.items():
+                # Calculate the distance between the midpoints
+                distance = math.dist(midpoint1, midpoint2)
+                
+                # Update the closest pair if the current distance is shorter
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_midpoints = (midpoint1, midpoint2)
         
-        elif math.pi / 4 <= angle_rad < 3 * math.pi / 8:
-            return room1_sides["top"], room2_sides["left"]
-
-        elif 3 * math.pi / 8 <= angle_rad < math.pi / 2:
-            return room1_sides["top"], room2_sides["bottom"]
-
-        elif math.pi / 2 < angle_rad < 5 * math.pi / 8:
-            return room1_sides["top"], room2_sides["bottom"]
-
-        elif 5 * math.pi / 8 <= angle_rad < 3 * math.pi / 4:
-            return room1_sides["top"], room2_sides["right"]
-
-        elif 3 * math.pi / 4 <= angle_rad < 7 * math.pi / 8:
-            return room1_sides["left"], room2_sides["bottom"]
-
-        elif 7 * math.pi / 8 <= angle_rad < math.pi:
-            return room1_sides["left"], room2_sides["right"]
-
-        elif math.pi<= angle_rad <9* math.pi / 8:
-            return room1_sides["left"], room2_sides["right"]
-        elif 9* math.pi/ 8<= angle_rad <5* math.pi /4 :
-            return room1_sides["left"], room2_sides["top"]
-        elif 5*math.pi/ 4<= angle_rad <11* math.pi /8 :
-            return room1_sides["bottom"], room2_sides["right"]
-        elif 11* math.pi/ 8<= angle_rad <6* math.pi /4 :
-            return room1_sides["bottom"], room2_sides["top"]
-        elif 12* math.pi/ 8<= angle_rad <13* math.pi /8 :
-            return room1_sides["bottom"], room2_sides["top"]
-        elif 13* math.pi/ 8<= angle_rad <14* math.pi /8 :
-            return room1_sides["bottom"], room2_sides["left"]
-        elif 14* math.pi/ 8<= angle_rad <15* math.pi /8 :
-            return room1_sides["right"], room2_sides["top"]
-        elif 15* math.pi/ 8<= angle_rad <16* math.pi /4 :
-            return room1_sides["right"], room2_sides["left"]
-
+        # Return the pair of midpoints with the shortest distance
+        return closest_midpoints
+    
+        
 
 
     def central(self):
@@ -228,43 +215,8 @@ class Map:
         return centers
             
 
-    def bresenhams(self,node1,node2):
-        x1 = node1[0]
-        x2  =node2[0]        
-        y1 = node1[1]
-        y2 = node2[1]
-        
-        dx = abs(x1 - x2)
-        dy = abs(y1 - y2)
-        sx = 1 if x1 < x2 else -1
-        sy = 1 if y1 < y2 else -1
-
-    # def bresenhams(self, node1, node2):
-    #     x1, y1 = node1
-    #     x2, y2 = node2
-        
-    #     if x1 == x2:  # Vertical connection
-    #         for y in range(min(y1, y2) - 1, max(y1, y2) + 2):  # Extend range to create a 3x3 vertical path
-    #             for x_offset in range(-1, 2):  # Create a 3x3 block
-    #                 if 0 <= x1 + x_offset < self.size and 0 <= y < self.size:  # Ensure we are within grid boundaries
-    #                     self.grid[x1 + x_offset][y] = "b"
-    #     elif y1 == y2:  # Horizontal connection
-    #         for x in range(min(x1, x2) - 1, max(x1, x2) + 2):  # Extend range to create a 3x3 horizontal path
-    #             for y_offset in range(-1, 2):  # Create a 3x3 block
-    #                 if 0 <= x < self.size and 0 <= y1 + y_offset < self.size:  # Ensure we are within grid boundaries
-    #                     self.grid[x][y1 + y_offset] = "b"
-    #     else:  # L-shaped connection
-    #         # Horizontal first
-    #         for x in range(x1, x2 + 1) if x1 < x2 else range(x1, x2 - 1, -1):
-    #             for y_offset in range(-1, 2):  # Create a 3x3 block
-    #                 if 0 <= x < self.size and 0 <= y1 + y_offset < self.size:  # Ensure we are within grid boundaries
-    #                     self.grid[x][y1 + y_offset] = "b"
-    #         # Then vertical
-    #         for y in range(y1, y2 + 1) if y1 < y2 else range(y1, y2 - 1, -1):
-    #             for x_offset in range(-1, 2):  # Create a 3x3 block
-    #                 if 0 <= x2 + x_offset < self.size and 0 <= y < self.size:  # Ensure we are within grid boundaries
-    #                     self.grid[x2 + x_offset][y] = "b"
-
+    
+    
     def bresenhams(self, node1, node2):
         x1, y1 = node1
         x2, y2 = node2
@@ -276,7 +228,7 @@ class Map:
 
         if dx > dy:  # If the line is more horizontal than vertical
             err = dx / 2.0
-            while x1 != x2 and y1!="a":
+            while x1 != x2 and y1!="a" and x1!= "a":
                 if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
                     self.grid[x1][y1] = "p"  # Mark the path
                 err -= dy
@@ -288,7 +240,7 @@ class Map:
                 self.grid[x2][y2] = "p"
         else:  # If the line is more vertical than horizontal
             err = dy / 2.0
-            while y1 != y2 and x1!="a":
+            while y1 != y2 and x1!="a" and y1!="a":
                 if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
                     self.grid[x1][y1] = "p"  # Mark the path
                 err -= dx
@@ -297,7 +249,7 @@ class Map:
                     err += dy
                 y1 += sy
             if 0 <= x2 < self.size and 0 <= y2 < self.size:  # Mark the last point
-                self.grid[x2][y2] = "b"
+                self.grid[x2][y2] = "p"
         
     
     def MST(self):
