@@ -39,7 +39,17 @@ class Game:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
                     self.player.stop()
 
+    def is_walkable(self, tilex, tiley):
+        # Check bounds
+        if tiley < 0 or tiley >= len(tile_map.tile_map) or tilex < 0 or tilex >= len(tile_map.tile_map[0]):
+            return False  # Out of bounds (collision)
+
+
+
+        return (tile_map.tile_map[tiley][tilex] != '.'     )  # Check if the tile is walkable
+
     def move(self):
+        # Store the previous position
         prevx = self.player.rect.x
         prevy = self.player.rect.y
 
@@ -52,20 +62,33 @@ class Game:
             self.player.moveUp()
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
-        
-        new_tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+
+        # Store the new position
+        new_tilex = (self.player.rect.x + config.TILE_SIZE // 2) // config.TILE_SIZE
         new_tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
-        if tile_map.tile_map[new_tiley][new_tilex] == '.':
+        # Check for collision with walls
+        if not self.is_walkable(new_tilex, new_tiley):
+            # Revert to previous position if not walkable
             self.player.rect.x = prevx
             self.player.rect.y = prevy
+        else:
+            # If the position is walkable, update the previous position
+            prevx = self.player.rect.x
+            prevy = self.player.rect.y
 
+        # Check for candy collision
         currPos = (new_tiley, new_tilex)
         if currPos in self.candies:
             self.player.candy += 1
             self.candies.remove(currPos)
 
-        self.screen.blit(self.player.image, (config.SCREEN_WIDTH // 2 - 64 , config.SCREEN_HEIGHT // 2 - 64))
+        # Draw the player centered on the screen
+        player_draw_x = config.SCREEN_WIDTH // 2 - self.player.rect.width // 2
+        player_draw_y = config.SCREEN_HEIGHT // 2 - self.player.rect.height // 2
+        self.screen.blit(self.player.image, (player_draw_x, player_draw_y))
+
+
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
