@@ -339,13 +339,13 @@ class Map:
             self.bresenhams((mid_x, midpoint2[1]), midpoint2)  # Horizontal to midpoint2
 
 
-    def generate_map(array_size, num_rooms,room_length, room_width):
-        myMap = Map(array_size,num_rooms,room_length,room_width)
-        centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2)
-        myMap.initialise_rooms()
-        myMap.add_rooms()
-        myMap.connect_rooms(myMap.MST())
-        myMap.print_grid()
+def generate_map(array_size, num_rooms,room_length, room_width):
+    myMap = Map(array_size,num_rooms,room_length,room_width)
+    centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2)
+    myMap.initialise_rooms()
+    myMap.add_rooms()
+    myMap.connect_rooms(myMap.MST())
+    return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
-Map.generate_map(100,16,8,8) 
+#Map.generate_map(100,16,8,8) 

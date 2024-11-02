@@ -22,8 +22,8 @@ class Game:
                 self.is_running = False
 
     def move(self):
-        # prevx = self.player.locationx
-        # prevy = self.player.locationy
+        prevx = self.player.locationx
+        prevy = self.player.locationy
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -35,13 +35,13 @@ class Game:
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
         
-        # new_tilex = self.player.locationx // config.TILE_SIZE
-        # new_tiley = self.player.locationy // config.TILE_SIZE
+        new_tilex = self.player.locationx // config.TILE_SIZE
+        new_tiley = self.player.locationy // config.TILE_SIZE
 
-        # self.player.update()
-        # if tile_map.tile_map[new_tiley][new_tilex] == '.':
-        #     self.player.locationx = prevx
-        #     self.player.locationy = prevy
+        self.player.update()
+        if tile_map.tile_map[new_tiley][new_tilex] == '.':
+            self.player.locationx = prevx
+            self.player.locationy = prevy
 
         self.screen.blit(self.player.image, (config.SCREEN_HEIGHT // 2 + 100, config.SCREEN_HEIGHT // 2 - 100))
 

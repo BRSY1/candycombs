@@ -4,6 +4,9 @@ import roomgen
 
 myMap = roomgen.generate_map(100,16,8,8)
 
+CENTERX = myMap.center_x
+CENTERY = myMap.center_y
+
 tile_map = myMap.grid
 
 floor_cracked = pygame.image.load("assets/tiles/floor_cracked.png")
@@ -25,5 +28,6 @@ tiles = {
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
+    'p': floor_split,
     '.': dark_wall
 }
