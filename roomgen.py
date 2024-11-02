@@ -77,7 +77,7 @@ class Map:
         self.rooms=[]
         self.center_x = self.size//2
         self.center_y = self.size//2
-        self.treasure_count = 10
+        self.treasure_count = 20
 
     def print_grid(self):
         for row in self.grid:
@@ -219,6 +219,7 @@ class Map:
                     floorTiles = ["a","b","c","d"]
                     random_number = random.randint(0,3)
                     self.grid[i][j] = floorTiles[random_number]
+            self.grid[room.x][room.y] = "t"
             
     def get_room_centers(self):
         centers=[]
@@ -330,7 +331,6 @@ class Map:
 
             midpoint1, midpoint2 = self.get_closest_side_midpoints(node1, node2)
 
-
             if midpoint1[0] < midpoint2[0]:  # Rightward connection
                 mid_x = midpoint1[0] + (midpoint2[0] - midpoint1[0]) // 2  # Midpoint in x
             else:  # Leftward connection
@@ -340,14 +340,14 @@ class Map:
             self.bresenhams((mid_x, midpoint2[1]), midpoint2)  # Horizontal to midpoint2
 
 
-    def add_treasure(self):
-        treasure_count = random.randint(self.treasure_count-1,self.treasure_count)
-        while treasure_count>0:
-            x = random.randint(0,50)
-            y = random.randint(0,50)
-            if self.grid[x][y] != ".":
-                self.grid[x][y] = "t"
-                treasure_count-=1
+    # def add_treasure(self):
+    #     treasure_count = random.randint(self.treasure_count-1,self.treasure_count)
+    #     while treasure_count>0:
+    #         x = random.randint(0,99)
+    #         y = random.randint(0,99)
+    #         if self.grid[x][y] != ".":
+    #             self.grid[x][y] = "t"
+    #             treasure_count-=1
 
 
 
@@ -355,10 +355,10 @@ def generate_map(array_size, num_rooms,room_length, room_width):
     myMap = Map(array_size,num_rooms,room_length,room_width)
     centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2)
     myMap.initialise_rooms()
-    myMap.add_rooms()
     myMap.connect_rooms(myMap.MST())
-    myMap.add_treasure()
-    #   myMap.print_grid()
+    myMap.add_rooms()
+    # myMap.add_treasure()
+    myMap.print_grid()
     return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
