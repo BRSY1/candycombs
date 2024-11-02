@@ -9,4 +9,4 @@ class Agent(player.Player):
         
     def update(self):
         self.rect.x += random.choice([-1 * config.SPEED, 0, 1 * config.SPEED])
-        self.rect.y += random.choice([-1 * config.SPEED, 0, 1])
+        self.rect.y += random.choice([-1 * config.SPEED, 0, 1 * config.SPEED])

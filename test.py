@@ -111,7 +111,6 @@ class Game:
             self.handleEvent()
             self.createVignetteEffect()
             self.valuables_UI()
-            self.moveAgents()
             pygame.display.flip()
 
     def drawTileMap(self):
