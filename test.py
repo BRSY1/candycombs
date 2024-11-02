@@ -23,6 +23,9 @@ class Game:
         self.agent_group = []
         self.agent_group.append(self.agent1) # can make this a for loop
         self.agent_group.append(self.agent2)
+        
+        self.offsetx = 0
+        self.offsety = 0
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -102,32 +105,47 @@ class Game:
             text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
             self.screen.blit(text, ((config.SCREEN_WIDTH/2)-30, 50))
 
+    def moveAgents(self):
+        self.offsetx = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
+        self.offsety = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
+
+        for agent in self.agent_group:
+            prevx = agent.rect.x
+            prevy = agent.rect.y
+            agent.update()
+
+            new_tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+            new_tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+
+            if tile_map.tile_map[new_tiley][new_tilex] == '.':
+                agent.speedx = 0
+                agent.speedy = 0
+                agent.rect.x = prevx
+                agent.rect.y = prevy
+            
+            self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
+
     def run(self):
         while self.is_running:
             self.clock.tick(config.FPS)
             self.drawTileMap()
             self.move()
             self.player.updateAnimation()
+            self.moveAgents()
             self.handleEvent()
             self.createVignetteEffect()
             self.valuables_UI()
             pygame.display.flip()
 
     def drawTileMap(self):
-        offset_x = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
-        offset_y = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
         
         self.screen.fill((100, 100, 100))
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
                 tile_image = tile_map.tiles[tile_type]
-                x = col_index * config.TILE_SIZE - offset_x
-                y = row_index * config.TILE_SIZE - offset_y
+                x = col_index * config.TILE_SIZE - self.offsetx
+                y = row_index * config.TILE_SIZE - self.offsety
                 self.screen.blit(tile_image, (x, y))
-        
-        for agent in self.agent_group:
-            agent.update()
-            self.screen.blit(agent.image, (agent.rect.x - offset_x, agent.rect.y - offset_y))
 
 
 #def draw_bar(screen, coins_collected, max_coins):
