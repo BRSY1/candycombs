@@ -45,7 +45,6 @@ class Game:
 
         self.screen.blit(self.player.image, (config.SCREEN_HEIGHT // 2 + 100, config.SCREEN_HEIGHT // 2 - 100))
 
-
     def run(self):
         while self.is_running:
             self.clock.tick(config.FPS)
@@ -54,6 +53,13 @@ class Game:
             self.handleEvent()
             pygame.display.flip()
     
+    def candyBar(self):
+        candy_amount = 10
+        candy_image = pygame.image.load("assets/tiles/candy_orange.png")
+        bar_position = (20,20)
+        bar_width = 10 * candy_amount
+        bar_height = 50
+
     def drawTileMap(self):
         offset_x = self.player.locationx - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
         offset_y = self.player.locationy - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
