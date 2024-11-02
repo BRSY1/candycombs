@@ -229,29 +229,35 @@ class Map:
 
         if dx > dy:  # If the line is more horizontal than vertical
             err = dx / 2.0
-            while x1 != x2 and y1 not in self.floorTiles and x1 not in self.floorTiles:
-                if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
-                    self.grid[x1][y1] = "p"  # Mark the path
+            while x1 != x2:
+                for i in range(2):  # Create a 2x2 block
+                    for j in range(2):
+                        if 0 <= x1 + i < self.size and 0 <= y1 + j < self.size:  # Ensure we are within grid boundaries
+                            self.grid[x1 + i][y1 + j] = "p"  # Mark the path
                 err -= dy
                 if err < 0:
                     y1 += sy
                     err += dx
                 x1 += sx
-            if 0 <= x2 < self.size and 0 <= y2 < self.size:  # Mark the last point
-                self.grid[x2][y2] = "p"
+
         else:  # If the line is more vertical than horizontal
             err = dy / 2.0
-            while y1 != y2 and x1 not in self.floorTiles and y1 not in self.floorTiles:
-                if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
-                    self.grid[x1][y1] = "p"  # Mark the path
+            while y1 != y2:
+                for i in range(2):  # Create a 2x2 block
+                    for j in range(2):
+                        if 0 <= x1 + i < self.size and 0 <= y1 + j < self.size:  # Ensure we are within grid boundaries
+                            self.grid[x1 + i][y1 + j] = "p"  # Mark the path
                 err -= dx
                 if err < 0:
                     x1 += sx
                     err += dy
                 y1 += sy
-            if 0 <= x2 < self.size and 0 <= y2 < self.size:  # Mark the last point
-                self.grid[x2][y2] = "p"
         
+        # Mark the last point with a 2x2 block
+        for i in range(2):
+            for j in range(2):
+                if 0 <= x2 + i < self.size and 0 <= y2 + j < self.size:  # Ensure we are within grid boundaries
+                    self.grid[x2 + i][y2 + j] = "p"  # Mark the path
     
     def MST(self):
         centers = self.get_room_centers()
