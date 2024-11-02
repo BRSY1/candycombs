@@ -26,6 +26,9 @@ class Game:
         
         self.offsetx = 0
         self.offsety = 0
+        self.candyGenerationCounter = 0
+        self.lastCandyGenerationTime = 0
+        self.candies = []
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -57,6 +60,11 @@ class Game:
             self.player.rect.x = prevx
             self.player.rect.y = prevy
 
+        currPos = (new_tiley, new_tilex)
+        if currPos in self.candies:
+            self.player.candy += 1
+            self.candies.remove(currPos)
+
         self.screen.blit(self.player.image, (config.SCREEN_WIDTH // 2 - 64 , config.SCREEN_HEIGHT // 2 - 64))
 
     def createVignetteEffect(self):
@@ -78,7 +86,7 @@ class Game:
         remaining_time = end_time - current_time
 
         time_amount = 3
-        candy_collected = 1000
+        candy_collected = self.player.candy
         powerUp_index = 0
 
         candy_ui = pygame.image.load("assets/ui/candy.png")
@@ -146,6 +154,8 @@ class Game:
             pygame.display.flip()
 
     def drawTileMap(self):
+        offset_x = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
+        offset_y = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
         
         self.screen.fill((100, 100, 100))
         for row_index, row in enumerate(tile_map.tile_map):
@@ -154,6 +164,29 @@ class Game:
                 x = col_index * config.TILE_SIZE - self.offsetx
                 y = row_index * config.TILE_SIZE - self.offsety
                 self.screen.blit(tile_image, (x, y))
+
+        # regenerate candies
+        currentTime = pygame.time.get_ticks()
+        if (self.lastCandyGenerationTime == 0 or
+            (currentTime - self.lastCandyGenerationTime >= config.CANDY_GENERATION_RATE)
+        ):
+            self.candies.clear()
+            self.generateCandies()
+            self.lastCandyGenerationTime = currentTime
+
+        # render candies
+        if currentTime - self.lastCandyGenerationTime <= config.CANDY_DISPLAY_INTERVAL:
+            candy_image = tile_map.candy  
+            for pos in self.candies:
+                candy_x = pos[1] * config.TILE_SIZE - offset_x
+                candy_y = pos[0] * config.TILE_SIZE - offset_y
+                self.screen.blit(candy_image, (candy_x, candy_y))
+
+    def generateCandies(self):
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                if tile_type not in ['.', 't'] and random.random() < 0.08:
+                    self.candies.append((row_index, col_index))
 
 
 #def draw_bar(screen, coins_collected, max_coins):

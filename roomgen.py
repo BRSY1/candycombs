@@ -315,4 +315,4 @@ def generate_map(array_size, num_rooms,room_length, room_width):
     return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
-# generate_map(100,16,8,8) 
+generate_map(100,16,8,8) 
