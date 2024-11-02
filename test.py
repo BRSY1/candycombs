@@ -46,7 +46,26 @@ class Game:
             self.player.locationx = prevx
             self.player.locationy = prevy
 
-        self.screen.blit(self.player.image, (config.SCREEN_HEIGHT // 2 + 100, config.SCREEN_HEIGHT // 2 - 100))
+        self.screen.blit(self.player.image, (config.SCREEN_WIDTH // 2 - 64 , config.SCREEN_HEIGHT // 2 - 64))
+
+    def drawCandybar(self):
+        font = pygame.font.Font(None, 36)
+        candy_collected = 10
+        candy_bar_width = candy_collected * 10
+        candy_bar_height = 40
+        candy_bar_position = (20,20)
+        pygame.draw.rect(self.screen, (255,165,0), (candy_bar_position[0] + 2, candy_bar_position[1] + 2, candy_bar_width, candy_bar_height-4))
+        text = font.render(f"Candy: {candy_collected}", True, (255,255,255))
+        self.screen.blit(text, (candy_bar_position[0] + 5 ,candy_bar_position[1] + 7))
+
+    def createVignetteEffect(self):
+        visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
+        visionSurface.fill((0,0,0,240))
+        center = (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2) 
+        for radius in range(config.VISION_RADIUS, 0, -50):
+            alpha = int(240 * (radius / config.VISION_RADIUS)) 
+            pygame.draw.circle(visionSurface, (0,0,0,0 + alpha), center, radius)
+        self.screen.blit(visionSurface, (0, 0))
 
     def run(self):
         while self.is_running:
@@ -55,6 +74,8 @@ class Game:
             self.move()
             self.player.updateAnimation()
             self.handleEvent()
+            self.createVignetteEffect()
+            self.drawCandybar()
             pygame.display.flip()
     
     def candyBar(self):

@@ -77,6 +77,7 @@ class Map:
         self.rooms=[]
         self.center_x = self.size//2
         self.center_y = self.size//2
+        self.treasure_count = 20
 
     def print_grid(self):
         for row in self.grid:
@@ -276,19 +277,19 @@ class Map:
             err = dx / 2.0
             while x1 != x2 and y1!="a":
                 if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
-                    self.grid[x1][y1] = "b"  # Mark the path
+                    self.grid[x1][y1] = "p"  # Mark the path
                 err -= dy
                 if err < 0:
                     y1 += sy
                     err += dx
                 x1 += sx
             if 0 <= x2 < self.size and 0 <= y2 < self.size:  # Mark the last point
-                self.grid[x2][y2] = "b"
+                self.grid[x2][y2] = "p"
         else:  # If the line is more vertical than horizontal
             err = dy / 2.0
             while y1 != y2 and x1!="a":
                 if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
-                    self.grid[x1][y1] = "b"  # Mark the path
+                    self.grid[x1][y1] = "p"  # Mark the path
                 err -= dx
                 if err < 0:
                     x1 += sx
@@ -339,13 +340,26 @@ class Map:
             self.bresenhams((mid_x, midpoint2[1]), midpoint2)  # Horizontal to midpoint2
 
 
+    def add_treasure(self):
+        treasure_count = random.randint(self.treasure_count-1,self.treasure_count)
+        while treasure_count>0:
+            x = random.randint(0,50)
+            y = random.randint(0,50)
+            if self.grid[x][y] != ".":
+                self.grid[x][y] = "t"
+                treasure_count-=1
+
+
+
 def generate_map(array_size, num_rooms,room_length, room_width):
     myMap = Map(array_size,num_rooms,room_length,room_width)
     centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2)
     myMap.initialise_rooms()
     myMap.add_rooms()
     myMap.connect_rooms(myMap.MST())
+    myMap.add_treasure()
+    myMap.print_grid()
     return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
-#Map.generate_map(100,16,8,8) 
+generate_map(100,16,8,8) 
