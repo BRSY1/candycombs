@@ -36,5 +36,6 @@ tiles = {
     'd': floor,
     'p': light_wall,
     '.': dark_wall,
-    't': chest_floor
+    't': chest_floor,
+    'l': floor_lava
 }
