@@ -1,8 +1,5 @@
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 1200
-<<<<<<< HEAD
 TILE_SIZE = 128
-=======
-TILE_SIZE = 20
->>>>>>> jack
 FPS = 60
+SPEED = 2
