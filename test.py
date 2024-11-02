@@ -29,6 +29,7 @@ class Game:
         self.candyGenerationCounter = 0
         self.lastCandyGenerationTime = 0
         self.candies = []
+        self.powerUpIndex = -1
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -43,7 +44,7 @@ class Game:
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
                     self.openChest(playerYPos, playerXPos)
 
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'k':
+                if event.key == pygame.K_p and tile_map.tile_map[playerYPos][playerXPos] == 'k':
                     self.pickUpPowerUp(playerYPos, playerXPos)
 
     def is_walkable(self, tilex, tiley):
@@ -162,6 +163,12 @@ class Game:
         scaled_powerup_ui = pygame.transform.scale(powerup_ui, (powerup_ui.get_width() * 12, powerup_ui.get_height() * 12))
         self.screen.blit(scaled_powerup_ui, (config.SCREEN_WIDTH-(32 * 12), 0))
 
+        # render current powerup
+        if self.powerUpIndex != -1:
+            powerUpImage = tile_map.powerUps[constants.KNIFE]
+            scaledPowerupImage = pygame.transform.scale(powerUpImage, (powerup_ui.get_width() * 5, powerup_ui.get_height() * 5))
+            self.screen.blit(scaledPowerupImage, (config.SCREEN_WIDTH-(17 * 12), 50))
+
         #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
         #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
         #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
@@ -240,14 +247,20 @@ class Game:
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                if tile_type not in ['.', 't'] and random.random() < 0.01:
+                if tile_type not in ['.', 't', 'l', 'e', 'm', 'h'] and random.random() < 0.01:
                     self.candies.append((row_index, col_index))
 
     def openChest(self, r, c):
         tile_map.tile_map[r][c] = 'k'
 
     def pickUpPowerUp(self, r, c):
-        tile_map.tile_map[r][c] = 'k'
+        tile_map.tile_map[r][c] = 'a'
+        self.powerUpIndex = constants.KNIFE
+
+        
+
+
+        
 
 
 #def draw_bar(screen, coins_collected, max_coins):

@@ -1,6 +1,7 @@
 import pygame
 import config
 import roomgen
+import constants
 
 myMap = roomgen.generate_map(100,16,8,8)
 
@@ -35,14 +36,30 @@ candy_knife = pygame.transform.scale(candy_knife, (config.TILE_SIZE, config.TILE
 lava = pygame.image.load("assets/tiles/lava.png")
 lava = pygame.transform.scale(lava, (config.TILE_SIZE, config.TILE_SIZE))
 
+easy = pygame.image.load("assets/tiles/easy.png")
+easy = pygame.transform.scale(easy, (config.TILE_SIZE, config.TILE_SIZE))
+
+med = pygame.image.load("assets/tiles/med.png")
+med = pygame.transform.scale(med, (config.TILE_SIZE, config.TILE_SIZE))
+
+hard = pygame.image.load("assets/tiles/hard.png")
+hard = pygame.transform.scale(hard, (config.TILE_SIZE, config.TILE_SIZE))
+
+candy_knife_ui = pygame.image.load("assets/items/candy_knife.png")
+candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, config.TILE_SIZE))
+
+powerUps = {
+    constants.KNIFE: candy_knife_ui
+}
+
 tiles = {
     'a': floor_cracked,
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
-    'e': light_wall, #easy
-    'm': light_wall, #med
-    'h': light_wall, #hard
+    'e': easy, #easy
+    'm': med, #med
+    'h': hard, #hard
     'p': light_wall,
     'l': lava, #lava
     '.': dark_wall,
