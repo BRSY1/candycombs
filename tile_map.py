@@ -45,6 +45,18 @@ med = pygame.transform.scale(med, (config.TILE_SIZE, config.TILE_SIZE))
 hard = pygame.image.load("assets/tiles/hard.png")
 hard = pygame.transform.scale(hard, (config.TILE_SIZE, config.TILE_SIZE))
 
+diamond = pygame.image.load("assets/tiles/diamond.png")
+diamond = pygame.transform.scale(diamond, (config.TILE_SIZE, config.TILE_SIZE))
+
+spade = pygame.image.load("assets/tiles/spade.png")
+spade = pygame.transform.scale(spade, (config.TILE_SIZE, config.TILE_SIZE))
+
+club = pygame.image.load("assets/tiles/club.png")
+club = pygame.transform.scale(club, (config.TILE_SIZE, config.TILE_SIZE))
+
+heart = pygame.image.load("assets/tiles/heart.png")
+heart = pygame.transform.scale(heart, (config.TILE_SIZE, config.TILE_SIZE))
+
 candy_knife_ui = pygame.image.load("assets/items/candy_knife.png")
 candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
@@ -65,8 +77,8 @@ tiles = {
     '.': dark_wall,
     't': chest_floor,
     'k': candy_knife,
-    '1': light_wall, #top left
-    '2': light_wall, #top right
-    '3': light_wall, #bottom left
-    '4': light_wall #bottom right
+    '1': diamond, #top left
+    '2': spade, #top right
+    '3': club, #bottom left
+    '4': heart #bottom right
 }
