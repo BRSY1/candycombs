@@ -53,6 +53,20 @@ class Game:
 
         return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
 
+    def lavaBlock(self):
+        value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                #print(tile_type)
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+        print(lavaTile[0])
+        for i in range(0,len(lavaTile)):
+            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
+                self.player.candy -= 5
+
     def move(self):
         # Store the previous position
         prevx = self.player.rect.x
@@ -186,6 +200,7 @@ class Game:
         while self.is_running:
             self.clock.tick(config.FPS)
             self.drawTileMap()
+            self.lavaBlock()
             self.move()
             self.player.updateAnimation()
             self.moveAgents()
