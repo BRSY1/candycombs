@@ -39,11 +39,23 @@ class Game:
         self.player.update()
         self.screen.blit(self.player.image, (self.player.locationx, self.player.locationy))
 
+    def drawCandybar(self):
+        font = pygame.font.Font(None, 36)
+        candy_collected = 10
+        candy_bar_width = candy_collected * 10
+        candy_bar_height = 40
+        candy_bar_position = (20,20)
+        pygame.draw.rect(self.screen, (255,165,0), (candy_bar_position[0] + 2, candy_bar_position[1] + 2, candy_bar_width, candy_bar_height-4))
+        text = font.render(f"Candy: {candy_collected}", True, (255,255,255))
+        self.screen.blit(text, (candy_bar_position[0] + 5 ,candy_bar_position[1] + 7))
+
+
     def run(self):
         while self.is_running:
             self.clock.tick(config.FPS)
             self.drawTileMap()
             self.handleEvent()
+            self.drawCandybar()
             pygame.display.flip()
             
     def drawTileMap(self):
@@ -54,6 +66,14 @@ class Game:
                 x = col_index * config.TILE_SIZE
                 y = row_index * config.TILE_SIZE
                 self.screen.blit(tile_image, (x, y))
+
+
+#def draw_bar(screen, coins_collected, max_coins):
+#    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
+#    fill_width = (coins_collected / max_coins) * (BAR_WIDTH - 4)  # -4 for padding
+#    pygame.draw.rect(screen, GREEN, (BAR_POS[0] + 2, BAR_POS[1] + 2, fill_width, BAR_HEIGHT - 4))  # Filled portion
+#    text = font.render(f"Coins: {coins_collected}/{max_coins}", True, BLACK)
+#    screen.blit(text, (BAR_POS[0] + 5, BAR_POS[1] - 25))  # Above the bar
 
 
 if __name__ == "__main__":
