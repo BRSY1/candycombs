@@ -1,13 +1,14 @@
 import pygame
 from pygame import sprite
 import config
+import tile_map
 
 class Player(sprite.Sprite):
     def __init__(self):
         self.image = pygame.image.load("assets/mainCharacterFrames/mainCharacterStanding1.png")
         self.image = pygame.transform.scale(self.image, (128, 128))
         
-        self.locationx, self.locationy = (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2)
+        self.locationx, self.locationy = tile_map.CENTERX * config.TILE_SIZE, tile_map.CENTERY * config.TILE_SIZE
 
         self.speedx = 0
         self.speedy = 0
