@@ -23,6 +23,7 @@ class Player(sprite.Sprite):
         self.speed = 2
         self.animate_speed = 0.1
         self.animate_frame = 0
+        self.candy = 10
     
     def updateAnimation(self):
         if self.is_moving:

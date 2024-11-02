@@ -6,7 +6,7 @@ import player
 import random
 import time
 
-end_time = time.time() + 10
+end_time = time.time() + 200
 
 class Game:
     def __init__(self):
@@ -39,31 +39,15 @@ class Game:
             self.player.moveUp()
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
-<<<<<<< HEAD
-             
-        # new_tilex = self.player.locationx // config.TILE_SIZE
-        # new_tiley = self.player.locationy // config.TILE_SIZE
-=======
         
         new_tilex = (self.player.locationx + config.TILE_SIZE // 4) // config.TILE_SIZE
         new_tiley = (self.player.locationy + config.TILE_SIZE // 2) // config.TILE_SIZE
->>>>>>> refs/remotes/origin/main
 
         if tile_map.tile_map[new_tiley][new_tilex] == '.':
             self.player.locationx = prevx
             self.player.locationy = prevy
 
         self.screen.blit(self.player.image, (config.SCREEN_WIDTH // 2 - 64 , config.SCREEN_HEIGHT // 2 - 64))
-
-    def drawCandybar(self):
-        font = pygame.font.Font(None, 36)
-        candy_collected = 10
-        candy_bar_width = candy_collected * 10
-        candy_bar_height = 40
-        candy_bar_position = (20,20)
-        pygame.draw.rect(self.screen, (255,165,0), (candy_bar_position[0] + 2, candy_bar_position[1] + 2, candy_bar_width, candy_bar_height-4))
-        text = font.render(f"Candy: {candy_collected}", True, (255,255,255))
-        self.screen.blit(text, (candy_bar_position[0] + 5 ,candy_bar_position[1] + 7))
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -79,7 +63,7 @@ class Game:
         box_width = 600
         box_height = 50
         #powerUps_file_location = ("","","","","")
-        countdown_time = 10
+        countdown_time = 200
         current_time = time.time()
         remaining_time = end_time - current_time
 
@@ -118,16 +102,10 @@ class Game:
             self.move()
             self.player.updateAnimation()
             self.handleEvent()
-<<<<<<< HEAD
+            self.createVignetteEffect()
             self.valuables_UI()
             pygame.display.flip()
-    
-=======
-            self.createVignetteEffect()
-            self.drawCandybar()
-            pygame.display.flip()
 
->>>>>>> refs/remotes/origin/main
     def drawTileMap(self):
         offset_x = self.player.locationx - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
         offset_y = self.player.locationy - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
