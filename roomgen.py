@@ -121,7 +121,6 @@ class Map:
     
     def MST(self):
         centers = self.get_room_centers()
-        print(centers)
         triangles = Delaunay(centers)
         graph = networkx.Graph(data=True)
         
@@ -172,12 +171,12 @@ class Map:
             self.bresenhams(node1,node2)
 
 
-myMap = Map(100,16,8,8)
-myMap.initialise_rooms()
-myMap.add_rooms()
-print(myMap.get_room_centers())
+    def generate_map(array_size, num_rooms,room_length, room_width):
+        myMap = Map(array_size,num_rooms,room_length,room_width)
+        myMap.initialise_rooms()
+        myMap.add_rooms()
+        myMap.connect_rooms(myMap.MST())
+        myMap.print_grid()
 
-
-
-myMap.connect_rooms(myMap.MST())
-myMap.print_grid()
+#Map.generate_map(empty array size, number of rooms, room length, room width)
+Map.generate_map(100,16,8,8) 
