@@ -19,15 +19,13 @@ class Agent(player.Player):
 
     def update(self):
         self.updateGrid()
-
         self.is_moving = True
-        if self.speedx > 0: prev_dir = True
-        else: prev_dir = False # true is right
+        if self.speedx > 0: self.facing_right = True
+        else: self.facing_right = False
+        self.updateAnimation()
+
         self.speedx += random.choice([-1, 0, 1])
         self.speedy += random.choice([-1, 0, 1])
-
-        if self.speedx < 0 and prev_dir == True or self.speedx > 0 and prev_dir == False:
-            self.image = pygame.transform.flip(self.image, True, False)
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
