@@ -76,13 +76,6 @@ class Game:
             self.createVignetteEffect()
             self.drawCandybar()
             pygame.display.flip()
-    
-    def candyBar(self):
-        candy_amount = 10
-        candy_image = pygame.image.load("assets/tiles/candy_orange.png")
-        bar_position = (20,20)
-        bar_width = 10 * candy_amount
-        bar_height = 50
 
     def drawTileMap(self):
         offset_x = self.player.locationx - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2

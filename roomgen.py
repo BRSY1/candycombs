@@ -77,7 +77,7 @@ class Map:
         self.rooms=[]
         self.center_x = self.size//2
         self.center_y = self.size//2
-        self.treasure_count = 20
+        self.treasure_count = 10
 
     def print_grid(self):
         for row in self.grid:
@@ -358,7 +358,7 @@ def generate_map(array_size, num_rooms,room_length, room_width):
     myMap.add_rooms()
     myMap.connect_rooms(myMap.MST())
     myMap.add_treasure()
-    # myMap.print_grid()
+    #   myMap.print_grid()
     return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
