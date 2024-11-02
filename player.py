@@ -22,7 +22,6 @@ class Player(sprite.Sprite):
 
         self.facing_right = True
         self.is_moving = False
-        self.speed = 2
         self.animate_speed = 0.1
         self.animate_frame = 0
         self.candy = 10
