@@ -5,6 +5,7 @@ import config
 import player
 import random
 import time
+import agent
 
 end_time = time.time() + 200
 
@@ -15,7 +16,13 @@ class Game:
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
-        self.player = player.Player()
+        self.player = player.Player("assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png")
+        self.agent1 = agent.Agent("assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png")
+        self.agent2 = agent.Agent("assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png")
+
+        self.agent_group = []
+        self.agent_group.append(self.agent1) # can make this a for loop
+        self.agent_group.append(self.agent2)
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -27,8 +34,8 @@ class Game:
                     self.player.stop()
 
     def move(self):
-        prevx = self.player.locationx
-        prevy = self.player.locationy
+        prevx = self.player.rect.x
+        prevy = self.player.rect.y
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -40,12 +47,12 @@ class Game:
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
         
-        new_tilex = (self.player.locationx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        new_tiley = (self.player.locationy + config.TILE_SIZE // 2) // config.TILE_SIZE
+        new_tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+        new_tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
         if tile_map.tile_map[new_tiley][new_tilex] == '.':
-            self.player.locationx = prevx
-            self.player.locationy = prevy
+            self.player.rect.x = prevx
+            self.player.rect.y = prevy
 
         self.screen.blit(self.player.image, (config.SCREEN_WIDTH // 2 - 64 , config.SCREEN_HEIGHT // 2 - 64))
 
@@ -104,11 +111,12 @@ class Game:
             self.handleEvent()
             self.createVignetteEffect()
             self.valuables_UI()
+            self.moveAgents()
             pygame.display.flip()
 
     def drawTileMap(self):
-        offset_x = self.player.locationx - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
-        offset_y = self.player.locationy - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
+        offset_x = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
+        offset_y = self.player.rect.y - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
         
         self.screen.fill((100, 100, 100))
         for row_index, row in enumerate(tile_map.tile_map):
@@ -117,6 +125,10 @@ class Game:
                 x = col_index * config.TILE_SIZE - offset_x
                 y = row_index * config.TILE_SIZE - offset_y
                 self.screen.blit(tile_image, (x, y))
+        
+        for agent in self.agent_group:
+            agent.update()
+            self.screen.blit(agent.image, (agent.rect.x - offset_x, agent.rect.y - offset_y))
 
 
 #def draw_bar(screen, coins_collected, max_coins):

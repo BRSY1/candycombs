@@ -4,16 +4,18 @@ import config
 import tile_map
 
 class Player(sprite.Sprite):
-    def __init__(self):
-        self.image = pygame.image.load("assets/mainCharacterFrames/mainCharacterStanding1.png")
+    def __init__(self, image1, image2):
+        super().__init__()
+        self.image = pygame.image.load(image1)
         self.image = pygame.transform.scale(self.image, (128, 128))
 
-        self.walking_image = pygame.image.load("assets/mainCharacterFrames/mainCharacterWalking.png")
+        self.walking_image = pygame.image.load(image2)
         self.walking_image = pygame.transform.scale(self.walking_image, (128, 128))
 
         self.standing_image = self.image
         
-        self.locationx, self.locationy = tile_map.CENTERX * config.TILE_SIZE, tile_map.CENTERY * config.TILE_SIZE
+        self.rect = self.image.get_rect() 
+        self.rect.topleft = (tile_map.CENTERX * config.TILE_SIZE, tile_map.CENTERY * config.TILE_SIZE)
 
         self.speedx = 0
         self.speedy = 0
@@ -37,23 +39,23 @@ class Player(sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
 
     def moveLeft(self):
-        self.locationx += -5 * config.SPEED
+        self.rect.x += -5 * config.SPEED
         self.is_moving = True
         if self.facing_right:
             self.facing_right = False
         
     def moveRight(self):
-        self.locationx += 5 * config.SPEED
+        self.rect.x += 5 * config.SPEED
         self.is_moving = True
         if not self.facing_right:
             self.facing_right = True
         
     def moveUp(self):
-        self.locationy += -5 * config.SPEED
+        self.rect.y += -5 * config.SPEED
         self.is_moving = True
 
     def moveDown(self):
-        self.locationy += 5 * config.SPEED
+        self.rect.y += 5 * config.SPEED
         self.is_moving = True
 
     def stop(self):
