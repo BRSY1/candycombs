@@ -4,6 +4,9 @@ import roomgen
 
 myMap = roomgen.generate_map(100,16,8,8)
 
+CENTERX = myMap.center_x
+CENTERY = myMap.center_y
+
 tile_map = myMap.grid
 
 floor_cracked = pygame.image.load("assets/tiles/floor_cracked.png")
@@ -17,13 +20,18 @@ floor = pygame.transform.scale(floor, (config.TILE_SIZE, config.TILE_SIZE))
 
 dark_wall = pygame.image.load("assets/tiles/dark_wall.png")
 dark_wall = pygame.transform.scale(dark_wall, (config.TILE_SIZE, config.TILE_SIZE))
-light_wall = pygame.image.load("assets/tiles/wall_light.png")
+light_wall = pygame.image.load("assets/tiles/light_wall.png")
 light_wall = pygame.transform.scale(light_wall, (config.TILE_SIZE, config.TILE_SIZE))
+
+chest_floor = pygame.image.load("assets/tiles/chest_floor.png")
+chest_floor = pygame.transform.scale(chest_floor, (config.TILE_SIZE, config.TILE_SIZE))
 
 tiles = {
     'a': floor_cracked,
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
-    '.': dark_wall
+    'p': floor_split,
+    '.': dark_wall,
+    't': chest_floor
 }
