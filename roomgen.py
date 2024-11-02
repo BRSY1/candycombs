@@ -209,14 +209,45 @@ class Map:
         for room in self.rooms:
             for i in range(room.left, room.right):
                 for j in range(room.top, room.bottom):
-                    
                     random_number = random.randint(0,3)
                     self.grid[i][j] = self.floorTiles[random_number]
-            if self.room.type == 0:
+            if room.type == 0: # Chest / Atrium
                 self.grid[room.x][room.y] = "t"
-            elif self.room.type == 1:
+            elif room.type == 1: # TOT
                 self.grid[room.x][room.y] = "t"
+                self.grid[room.x-1][room.y] = "l"
+                self.grid[room.x-1][room.y-1] = 'l'
+                self.grid[room.x][room.y-1] = 'l'
+
+                #horizontal parts
+                for i in range(0,6):
+                    self.grid[room.x-3][room.y-3+i] = 'l'
+                    self.grid[room.x+2][room.y-3+i] = 'l'
+
+                #vertical parts
+                for i in range(0,4):
+                    self.grid[room.x-2+i][room.y-3] = 'l'
+                    self.grid[room.x-2+i][room.y+2] = 'l'
                 
+                i = random.randint(1,4)
+                j = random.randint(1,4)
+                if i == 1:
+                    self.grid[room.x-3][room.y-3+j] = 'a'
+                elif i == 2:
+                    self.grid[room.x-3+j][room.y+2] = 'a'
+                elif i == 3:
+                    self.grid[room.x+2][room.y-3+j] = 'a'
+                elif i == 4:
+                    self.grid[room.x-3+j][room.y-3] = 'a'
+            elif room.type == 2: # TT
+                self.grid[room.x][room.y-2] = 'e'
+                self.grid[room.x][room.y] = 'm'
+                self.grid[room.x][room.y+2] = 'h'
+            elif room.type == 3: # GG
+                self.grid[room.x-1][room.y-1] = '1'
+                self.grid[room.x-1][room.y] = '2'
+                self.grid[room.x][room.y-1] = '3'
+                self.grid[room.x][room.y] = '4'
             
     def get_room_centers(self):
         centers=[]
@@ -321,7 +352,7 @@ class Map:
 
 def generate_map(array_size, num_rooms,room_length, room_width):
     myMap = Map(array_size,num_rooms,room_length,room_width)
-    centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2)
+    centralRoom = Room(myMap.center_x,myMap.center_y, myMap.size*2, myMap.size*2, 0)
     myMap.initialise_rooms()
     myMap.connect_rooms(myMap.MST())
     myMap.add_rooms()

@@ -34,8 +34,16 @@ tiles = {
     'b': floor_split_cracked,
     'c': floor_split,
     'd': floor,
+    'e': light_wall, # easy block
+    'h': light_wall, # hard block
+    'm': light_wall, # med block
     'p': light_wall,
-    '.': dark_wall,
     't': chest_floor,
-    'l': floor_lava
+    'l': light_wall, # lava block
+    '1': light_wall, # top left table
+    '2': light_wall, # top right table
+    '3': light_wall, # bottom left table
+    '4': light_wall, # bottom right table
+    '.': dark_wall
+
 }
