@@ -38,8 +38,8 @@ class Game:
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
         
-        new_tilex = self.player.locationx // config.TILE_SIZE
-        new_tiley = self.player.locationy // config.TILE_SIZE
+        new_tilex = (self.player.locationx + config.TILE_SIZE // 4) // config.TILE_SIZE
+        new_tiley = (self.player.locationy + config.TILE_SIZE // 2) // config.TILE_SIZE
 
         self.player.update()
         if tile_map.tile_map[new_tiley][new_tilex] == '.':
@@ -55,7 +55,6 @@ class Game:
             self.move()
             self.player.updateAnimation()
             self.handleEvent()
-            self.drawCandybar()
             pygame.display.flip()
     
     def candyBar(self):
