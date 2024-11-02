@@ -16,10 +16,13 @@ class Game:
         self.player = player.Player()
 
     def handleEvent(self):
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
+
+            elif event.type == pygame.KEYUP:
+                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                    self.player.stop()
 
     def move(self):
         # prevx = self.player.locationx
@@ -50,6 +53,7 @@ class Game:
             self.clock.tick(config.FPS)
             self.drawTileMap()
             self.move()
+            self.player.updateAnimation()
             self.handleEvent()
             pygame.display.flip()
     
