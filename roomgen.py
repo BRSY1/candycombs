@@ -78,6 +78,7 @@ class Map:
         self.center_x = self.size//2
         self.center_y = self.size//2
         self.treasure_count = 20
+        self.floorTiles = ["a","b","c","d"]
 
     def print_grid(self):
         for row in self.grid:
@@ -203,9 +204,9 @@ class Map:
         for room in self.rooms:
             for i in range(room.left, room.right):
                 for j in range(room.top, room.bottom):
-                    floorTiles = ["a","b","c","d"]
+                    
                     random_number = random.randint(0,3)
-                    self.grid[i][j] = floorTiles[random_number]
+                    self.grid[i][j] = self.floorTiles[random_number]
             self.grid[room.x][room.y] = "t"
             
     def get_room_centers(self):
@@ -228,7 +229,7 @@ class Map:
 
         if dx > dy:  # If the line is more horizontal than vertical
             err = dx / 2.0
-            while x1 != x2 and y1!="a" and x1!= "a":
+            while x1 != x2 and y1 not in self.floorTiles and x1 not in self.floorTiles:
                 if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
                     self.grid[x1][y1] = "p"  # Mark the path
                 err -= dy
@@ -240,7 +241,7 @@ class Map:
                 self.grid[x2][y2] = "p"
         else:  # If the line is more vertical than horizontal
             err = dy / 2.0
-            while y1 != y2 and x1!="a" and y1!="a":
+            while y1 != y2 and x1 not in self.floorTiles and y1 not in self.floorTiles:
                 if 0 <= x1 < self.size and 0 <= y1 < self.size:  # Ensure we are within grid boundaries
                     self.grid[x1][y1] = "p"  # Mark the path
                 err -= dx
