@@ -39,15 +39,9 @@ class Game:
             self.player.moveUp()
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
-<<<<<<< HEAD
-             
-        # new_tilex = self.player.locationx // config.TILE_SIZE
-        # new_tiley = self.player.locationy // config.TILE_SIZE
-=======
         
         new_tilex = (self.player.locationx + config.TILE_SIZE // 4) // config.TILE_SIZE
         new_tiley = (self.player.locationy + config.TILE_SIZE // 2) // config.TILE_SIZE
->>>>>>> refs/remotes/origin/main
 
         if tile_map.tile_map[new_tiley][new_tilex] == '.':
             self.player.locationx = prevx
@@ -118,16 +112,10 @@ class Game:
             self.move()
             self.player.updateAnimation()
             self.handleEvent()
-<<<<<<< HEAD
-            self.valuables_UI()
-            pygame.display.flip()
-    
-=======
             self.createVignetteEffect()
             self.drawCandybar()
             pygame.display.flip()
 
->>>>>>> refs/remotes/origin/main
     def drawTileMap(self):
         offset_x = self.player.locationx - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
         offset_y = self.player.locationy - config.SCREEN_HEIGHT // 2 + config.TILE_SIZE // 2
