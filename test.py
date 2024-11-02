@@ -59,8 +59,8 @@ class Game:
         self.screen.blit(visionSurface, (0, 0))
 
     def valuables_UI(self):
-        box_position = (500, 40)
-        box_width = 600
+        box_position = ((config.SCREEN_WIDTH/2)-300, 40)
+        box_width = (config.SCREEN_WIDTH/2) - 200 
         box_height = 50
         #powerUps_file_location = ("","","","","")
         countdown_time = 200
@@ -68,12 +68,12 @@ class Game:
         remaining_time = end_time - current_time
 
         time_amount = 3
-        candy_collected = 10
+        candy_collected = self.player.candy
         powerUp_index = 0
 
         #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
         #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
-        #self.screen.blit(scaled_power_image, (20,20))
+        #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
 
         candy_image = pygame.image.load("assets/tiles/candy_orange.png")
         scaled_candy_image = pygame.transform.scale(candy_image, (candy_image.get_width() * 4, candy_image.get_height() * 4))
@@ -87,13 +87,13 @@ class Game:
             bar_width = ((remaining_time/countdown_time) * box_width) -4
             pygame.draw.rect(self.screen, (0,0,0), (*box_position, box_width, box_height), 2)
             pygame.draw.rect(self.screen, (139,0,139), (box_position[0] + 2, box_position[1] + 2, bar_width, box_height-4))
-            pygame.draw.rect(self.screen, (128,128,128), (box_position[0] + 2 + bar_width, box_position[1] + 2, (596 - bar_width), box_height-4))
+            pygame.draw.rect(self.screen, (128,128,128), (box_position[0] + 2 + bar_width, box_position[1] + 2, ((bar_width-4) - bar_width), box_height-4))
             remaining_time = int(remaining_time)
             minutes = (remaining_time % 3600) // 60
             seconds = remaining_time % 60
             font_countdown = pygame.font.Font(None, 40)
             text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
-            self.screen.blit(text, (770, 50))
+            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-30, 50))
 
     def run(self):
         while self.is_running:
