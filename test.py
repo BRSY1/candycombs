@@ -185,7 +185,7 @@ class Game:
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                if tile_type not in ['.', 't'] and random.random() < 0.08:
+                if tile_type not in ['.', 't'] and random.random() < 0.01:
                     self.candies.append((row_index, col_index))
 
 
