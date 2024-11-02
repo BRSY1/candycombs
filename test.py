@@ -11,7 +11,7 @@ class Game:
         pygame.init()
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
-        self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.player = player.Player()
 
