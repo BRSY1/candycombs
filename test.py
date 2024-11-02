@@ -74,7 +74,7 @@ class Game:
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
         # Check for collision with walls
-        if not self.is_walkable(new_tilex, new_tiley):
+        if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
             self.player.rect.x = prevx
             self.player.rect.y = prevy
