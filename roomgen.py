@@ -111,7 +111,9 @@ class Map:
         for room in self.rooms:
             for i in range(room.left, room.right):
                 for j in range(room.top, room.bottom):
-                    self.grid[i][j] = "a"
+                    floorTiles = ["a","b","c","d"]
+                    random_number = random.randint(0,3)
+                    self.grid[i][j] = floorTiles[random_number]
             
     def get_room_centers(self):
         centers=[]
@@ -171,12 +173,13 @@ class Map:
             self.bresenhams(node1,node2)
 
 
-    def generate_map(array_size, num_rooms,room_length, room_width):
-        myMap = Map(array_size,num_rooms,room_length,room_width)
-        myMap.initialise_rooms()
-        myMap.add_rooms()
-        myMap.connect_rooms(myMap.MST())
-        myMap.print_grid()
+def generate_map(array_size, num_rooms,room_length, room_width):
+    myMap = Map(array_size,num_rooms,room_length,room_width)
+    myMap.initialise_rooms()
+    myMap.add_rooms()
+    myMap.connect_rooms(myMap.MST())
+    # myMap.print_grid()
+    return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
-Map.generate_map(100,16,8,8) 
+# Map.generate_map(100,16,8,8) 
