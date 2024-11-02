@@ -1,5 +1,5 @@
 import pygame
-
+import tile_map
 import constants
 import config
 
@@ -12,7 +12,7 @@ class Game:
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
 
-    def handle_event(self):
+    def handleEvent(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
@@ -20,8 +20,18 @@ class Game:
     def run(self):
         while self.is_running:
             self.clock.tick(config.FPS)
-            self.handle_event()
-            self.screen.fill(constants.BLACK)
+            self.handleEvent()
+            self.drawTileMap()
+            
+    def drawTileMap(self):
+        self.screen.fill((100, 100, 100))
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                tile_image = tile_map.tiles[tile_type]
+                x = col_index * config.TILE_SIZE
+                y = row_index * config.TILE_SIZE
+                self.screen.blit(tile_image, (x, y))
+        pygame.display.flip()
 
     
 if __name__ == "__main__":
