@@ -15,7 +15,10 @@ class Player(sprite.Sprite):
         self.image = self.images[0][0]
         
         self.rect = self.image.get_rect() 
-        self.rect.topleft = (tile_map.CENTERX * config.TILE_SIZE, tile_map.CENTERY * config.TILE_SIZE)
+        if locationx == None:
+            self.rect.topleft = (tile_map.CENTERX * config.TILE_SIZE, tile_map.CENTERY * config.TILE_SIZE)
+        else:
+            self.rect.topleft = (locationx * config.TILE_SIZE, locationy * config.TILE_SIZE)
 
         self.speedx = 0
         self.speedy = 0
@@ -23,7 +26,7 @@ class Player(sprite.Sprite):
         if not locationx:
             self.tilex = (self.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
             self.tiley = (self.rect.y + config.TILE_SIZE // 4) // config.TILE_SIZE
-            
+
         self.tilex = locationx
         self.tiley = locationy
 

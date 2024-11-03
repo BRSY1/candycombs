@@ -16,8 +16,8 @@ def getLocation():
     locationx, locationy = None, None
     for i in range(100):
         for j in range(100):
-            if tile_map.tile_map[i][j] == 't':
-                if random.choice([range(0, 5) == 1]):
+            if tile_map.tile_map[j][i] == 't':
+                if random.randint(0, 3)  == 1:
                     locationy = j
                     locationx = i
                 
@@ -53,11 +53,35 @@ class Game:
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent4 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent5 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent6 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent7 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent8 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent9 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent10 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent11 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent12 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent13 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent14 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], None, None)
+        locationx, locationy = getLocation()
+        self.agent15 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]], None, None)
+        locationx, locationy = getLocation()
+        self.agent16 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], None, None)
 
-        self.agent_group = []
-        self.agent_group.append(self.agent1) # can make this a for loop
-        self.agent_group.append(self.agent2)
-        self.agent_group.append(self.agent3)
+
+        self.agent_group = [self.agent1, self.agent2, self.agent3, self.agent4, self.agent5, self.agent6, self.agent7, self.agent8, self.agent9, self.agent10, self.agent11, self.agent12, self.agent13, self.agent14, self.agent15]
         
         self.offsetx = 0
         self.offsety = 0
@@ -157,7 +181,7 @@ class Game:
                     if event.key == pygame.K_RETURN:
                         self.is_load_screen = False
                         global end_time
-                        end_time = time.time() + 300
+                        end_time = time.time() + 90
             
             elif event.type == pygame.KEYUP:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
@@ -259,6 +283,11 @@ class Game:
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
                 
+            
+            if self.player.powerUpIndex == constants.INVISIBILITY:
+                self.powerUpLast = pygame.time.get_ticks()
+                self.player.powerUpIndex = -1
+                self.player.is_invisible = True
             
             
                 
@@ -673,8 +702,7 @@ class Game:
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
             self.night_vis = False
-            
-        
+            self.player.is_invisible = False
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -819,13 +847,13 @@ class Game:
             self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion") 
+            self.message.append("You just got a speed potion")
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion") 
         elif tile_map.tile_map[r][c] == 'n':
             self.player.powerUpIndex = constants.NIGHT_VISION
-            self.message.append("You just got a night vision potion!")
+            self.message.append("You just got a night vision potion")
         tile_map.tile_map[r][c] = 'a'
 
     def messageMaintainer(self):
