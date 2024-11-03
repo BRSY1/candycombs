@@ -16,6 +16,9 @@ class Game:
 
     def __init__(self, isTraining=False):
         pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load("")
+        pygame.mixer.music.play(-1)
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
