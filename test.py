@@ -107,7 +107,7 @@ class Game:
             if self.powerUpIndex == constants.SPEED:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.powerUpIndex = -1
-                config.SPEED *= 2
+                config.SPEED *= 5
                 print(config.SPEED)
         
                     
