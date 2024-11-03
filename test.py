@@ -7,6 +7,7 @@ import random
 import time
 import agent
 import torch
+import textwrap
 
 end_time = time.time() + 200
 
@@ -46,6 +47,8 @@ class Game:
         self.vignetteColourG = 0
         self.vignetteColourB = 0
         self.message = []
+        self.exit = 0
+        self.randomQuestion = random.randint(0,4)
 
         self.isTraining = isTraining
 
@@ -244,32 +247,242 @@ class Game:
         medium = constants.medium_questions
         hard = constants.hard_questions
 
+        keys = pygame.key.get_pressed()
 
-        if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
-            trivia_ui = pygame.image.load("assets/ui/trivia.png")
-            scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
-            self.screen.blit(scaled_trivia_ui, (450, 180))
-            trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
-            text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
-            self.screen.blit(text, (500+32, 180+16))
+        if(self.easyTile_activ == 1):
+                if self.player.candy < 2:
+                    self.message.append("You cannot afford this")
+                    self.exit = 1
+                else:
+                    trivia_ui = pygame.image.load("assets/ui/trivia.png")
+                    scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+                    self.screen.blit(scaled_trivia_ui, (450, 180))
+                    trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+                    text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
+                    self.screen.blit(text, (500+32, 180+16))
 
-            one = pygame.image.load("assets/ui/1.png")
-            one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
-            self.screen.blit(one, (480, 500))
+                    one = pygame.image.load("assets/ui/1.png")
+                    one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+                    self.screen.blit(one, (480, 500))
 
-            two = pygame.image.load("assets/ui/2.png")
-            two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
-            self.screen.blit(two, (860, 500))
+                    two = pygame.image.load("assets/ui/2.png")
+                    two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+                    self.screen.blit(two, (860, 500))
 
-            three = pygame.image.load("assets/ui/3.png")
-            three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
-            self.screen.blit(three, (480, 600))
+                    three = pygame.image.load("assets/ui/3.png")
+                    three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+                    self.screen.blit(three, (480, 600))
 
-            four = pygame.image.load("assets/ui/4.png")
-            four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
-            self.screen.blit(four, (860, 600))
+                    four = pygame.image.load("assets/ui/4.png")
+                    four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+                    self.screen.blit(four, (860, 600))
+                    i = self.randomQuestion
+                    offset = 0
+                    question = easy[i][0]
+                    sub_array = question.split("$")
+                    for line in sub_array:
+                        trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+                        question_text = trivia_question.render(f"{line}", True, (255,255,255))
+                        self.screen.blit(question_text, (400,400+offset))
+                        offset += 50
+                    answer = easy[i][5]
+                    chosen = -1
+                    
 
-            keys = pygame.key.get_pressed()
+                    #answer text
+                    oneAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    oneAnswerText = oneAnswer.render(f"{easy[i][1]}", True, (255,255,255))
+                    self.screen.blit(oneAnswerText, (550,600))
+
+                    twoAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    twoAnswerText = twoAnswer.render(f"{easy[i][2]}", True, (255,255,255))
+                    self.screen.blit(twoAnswerText, (930,600))
+
+                    threeAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    threeAnswerText = threeAnswer.render(f"{easy[i][3]}", True, (255,255,255))
+                    self.screen.blit(threeAnswerText, (550,700))
+
+                    fourAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    fourAnswerText = fourAnswer.render(f"{easy[i][4]}", True, (255,255,255))
+                    self.screen.blit(fourAnswerText, (930,700))
+                    
+                    if keys[pygame.K_1]:
+                        chosen = 0
+                    elif keys[pygame.K_2]:
+                        chosen = 1
+                    elif keys[pygame.K_3]:
+                        chosen = 2
+                    elif keys[pygame.K_4]:
+                        chosen = 3
+                    if chosen == answer:
+                        self.player.candy += 2
+                        self.message.append("You got it right and gained 2 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'
+                        self.exit = 1
+                    elif chosen != answer and chosen != -1:
+                        self.player.candy -= 2
+                        self.message.append("You got it wrong and lost 2 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'   
+                        self.exit = 1
+            
+        if(self.mediumTileTil_activ == 1):
+                if self.player.candy < 4:
+                    self.message.append("You cannot afford this")
+                    self.exit = 1
+                else:
+                    trivia_ui = pygame.image.load("assets/ui/trivia.png")
+                    scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+                    self.screen.blit(scaled_trivia_ui, (450, 180))
+                    trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+                    text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
+                    self.screen.blit(text, (500+32, 180+16))
+
+                    one = pygame.image.load("assets/ui/1.png")
+                    one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+                    self.screen.blit(one, (480, 500))
+
+                    two = pygame.image.load("assets/ui/2.png")
+                    two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+                    self.screen.blit(two, (860, 500))
+
+                    three = pygame.image.load("assets/ui/3.png")
+                    three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+                    self.screen.blit(three, (480, 600))
+
+                    four = pygame.image.load("assets/ui/4.png")
+                    four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+                    self.screen.blit(four, (860, 600))
+                    i = self.randomQuestion
+                    question = medium[i][0]
+                    answer = medium[i][5]
+                    chosen = -1
+                    offset = 0
+                    sub_array = question.split("$")
+                    for line in sub_array:
+                        trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+                        question_text = trivia_question.render(f"{line}", True, (255,255,255))
+                        self.screen.blit(question_text, (400,400+offset))
+                        offset += 50
+
+                    #answer text
+                    oneAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    oneAnswerText = oneAnswer.render(f"{medium[i][1]}", True, (255,255,255))
+                    self.screen.blit(oneAnswerText, (550,600))
+
+                    twoAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    twoAnswerText = twoAnswer.render(f"{medium[i][2]}", True, (255,255,255))
+                    self.screen.blit(twoAnswerText, (930,600))
+
+                    threeAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    threeAnswerText = threeAnswer.render(f"{medium[i][3]}", True, (255,255,255))
+                    self.screen.blit(threeAnswerText, (550,700))
+
+                    fourAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    fourAnswerText = fourAnswer.render(f"{medium[i][4]}", True, (255,255,255))
+                    self.screen.blit(fourAnswerText, (930,700))
+                    
+                    if keys[pygame.K_1]:
+                        chosen = 0
+                    elif keys[pygame.K_2]:
+                        chosen = 1
+                    elif keys[pygame.K_3]:
+                        chosen = 2
+                    elif keys[pygame.K_4]:
+                        chosen = 3
+                    if chosen == answer:
+                        self.player.candy += 4
+                        self.message.append("You got it right and gained 4 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'
+                        self.exit = 1
+                    elif chosen != answer and chosen != -1:
+                        self.player.candy -= 4
+                        self.message.append("You got it wrong and lost 4 candy")
+                        self.exit = 1
+
+        if(self.hardTile_activ == 1):
+                if self.player.candy < 8:
+                    self.message.append("You cannot afford this")
+                    self.exit = 1
+                else:
+                    trivia_ui = pygame.image.load("assets/ui/trivia.png")
+                    scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+                    self.screen.blit(scaled_trivia_ui, (450, 180))
+                    trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+                    text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
+                    self.screen.blit(text, (500+32, 180+16))
+
+                    one = pygame.image.load("assets/ui/1.png")
+                    one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+                    self.screen.blit(one, (480, 500))
+
+                    two = pygame.image.load("assets/ui/2.png")
+                    two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+                    self.screen.blit(two, (860, 500))
+
+                    three = pygame.image.load("assets/ui/3.png")
+                    three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+                    self.screen.blit(three, (480, 600))
+
+                    four = pygame.image.load("assets/ui/4.png")
+                    four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+                    self.screen.blit(four, (860, 600))
+                    i = self.randomQuestion
+                    question = hard[i][0]
+                    answer = hard[i][5]
+                    chosen = -1
+                    offset = 0
+                    sub_array = question.split("$")
+                    for line in sub_array:
+                        trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+                        question_text = trivia_question.render(f"{line}", True, (255,255,255))
+                        self.screen.blit(question_text, (400,400+offset))
+                        offset += 50
+
+                    #answer text
+                    oneAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    oneAnswerText = oneAnswer.render(f"{hard[i][1]}", True, (255,255,255))
+                    self.screen.blit(oneAnswerText, (550,600))
+
+                    twoAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    twoAnswerText = twoAnswer.render(f"{hard[i][2]}", True, (255,255,255))
+                    self.screen.blit(twoAnswerText, (930,600))
+
+                    threeAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    threeAnswerText = threeAnswer.render(f"{hard[i][3]}", True, (255,255,255))
+                    self.screen.blit(threeAnswerText, (550,700))
+
+                    fourAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    fourAnswerText = fourAnswer.render(f"{hard[i][4]}", True, (255,255,255))
+                    self.screen.blit(fourAnswerText, (930,700))
+                    
+                    if keys[pygame.K_1]:
+                        chosen = 0
+                    elif keys[pygame.K_2]:
+                        chosen = 1
+                    elif keys[pygame.K_3]:
+                        chosen = 2
+                    elif keys[pygame.K_4]:
+                        chosen = 3
+                    if chosen == answer:
+                        self.player.candy += 8
+                        self.message.append("You got it right and gained 8 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'
+                        self.exit = 1
+                    elif chosen != answer and chosen != -1:
+                        self.player.candy -= 8
+                        self.message.append("You got it wrong and lost 8 candy")
+                        self.exit = 1
+            
+        if self.exit == 1:
+            self.easyTile_activ = 0
+            self.hardTile_activ = 0
+            self.mediumTileTil_activ = 0
+            self.randomQuestion = random.randint(0,4)
+            self.exit = 0
+
+
+            
+
 
             
 
