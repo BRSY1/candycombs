@@ -182,7 +182,7 @@ class Game:
                     if event.key == pygame.K_RETURN:
                         self.is_load_screen = False
                         global end_time
-                        end_time = time.time() + 90
+                        end_time = time.time() + 300
             
             elif event.type == pygame.KEYUP:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
@@ -277,7 +277,7 @@ class Game:
             if self.player.powerUpIndex == constants.SPEED:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
-                config.SPEED *= 3
+                config.SPEED *= 2
             
             if self.player.powerUpIndex == constants.NIGHT_VISION:
                 self.powerUpLast = pygame.time.get_ticks()
@@ -393,7 +393,7 @@ class Game:
                     self.screen.blit(scaled_trivia_ui, (450, 180))
                     trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
                     text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
-                    self.screen.blit(text, (500+32, 180+16))
+                    self.screen.blit(text, (532, 140))
 
                     one = pygame.image.load("assets/ui/1.png")
                     one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
@@ -469,7 +469,7 @@ class Game:
                     self.screen.blit(scaled_trivia_ui, (450, 180))
                     trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
                     text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
-                    self.screen.blit(text, (500+32, 180+16))
+                    self.screen.blit(text, (532, 140))
 
                     one = pygame.image.load("assets/ui/1.png")
                     one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
@@ -543,7 +543,7 @@ class Game:
                     self.screen.blit(scaled_trivia_ui, (450, 180))
                     trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
                     text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
-                    self.screen.blit(text, (500+32, 180+16))
+                    self.screen.blit(text, (532, 140))
 
                     one = pygame.image.load("assets/ui/1.png")
                     one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
@@ -691,6 +691,7 @@ class Game:
                 self.animation_type = self.random
                 self.animation = 0
                 self.animation_time = 0
+            self.message.append(f"You just won {self.casino_reward}")
             reward = title_font.render(f"Reward: {self.casino_reward}", True, (255,0,0))
             self.screen.blit(reward, (left+310,top+360))
             if self.exit == 1:
