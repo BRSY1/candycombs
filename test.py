@@ -240,6 +240,11 @@ class Game:
                 # self.createVignetteEffect()
 
     def quizTiles(self):
+        easy = constants.easy_questions
+        medium = constants.medium_questions
+        hard = constants.hard_questions
+
+
         if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
