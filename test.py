@@ -22,7 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
                                      ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"],
-                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"]])
+                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"],
+                                     ["assets/mainCharacterFrames/mainCharcterInvisbleStanding.png","assets/mainCharacterFrames/mainCharacterInvisibleWalking.png"]])
         self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
@@ -169,6 +170,33 @@ class Game:
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
             
+            if self.player.powerUpIndex == constants.INVISIBILITY:
+                self.powerUpLast = pygame.time.get_ticks()
+                self.player.powerUpIndex = -1
+                self.player.is_invisible = True
+            
+            
+            
+                
+        
+                    
+
+        value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+
+                value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
@@ -229,6 +257,11 @@ class Game:
                 # self.createVignetteEffect()
 
     def quizTiles(self):
+        easy = constants.easy_questions
+        medium = constants.medium_questions
+        hard = constants.hard_questions
+
+
         if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
@@ -236,6 +269,26 @@ class Game:
             trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
             text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
             self.screen.blit(text, (500+32, 180+16))
+
+            one = pygame.image.load("assets/ui/1.png")
+            one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+            self.screen.blit(one, (480, 500))
+
+            two = pygame.image.load("assets/ui/2.png")
+            two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+            self.screen.blit(two, (860, 500))
+
+            three = pygame.image.load("assets/ui/3.png")
+            three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+            self.screen.blit(three, (480, 600))
+
+            four = pygame.image.load("assets/ui/4.png")
+            four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+            self.screen.blit(four, (860, 600))
+
+            keys = pygame.key.get_pressed()
+
+            
 
 
 
@@ -299,7 +352,9 @@ class Game:
         now = pygame.time.get_ticks()
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
-            self.night_vis = False
+            self.player.night_vis = False
+            self.player.is_invisible = False
+            
             
 
     def createVignetteEffect(self):
@@ -391,7 +446,7 @@ class Game:
                 agent.rect.x = prevx
                 agent.rect.y = prevy
             
-            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1:
+            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1 and not self.player.is_invisible:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
@@ -448,8 +503,6 @@ class Game:
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
 
-    
-
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
@@ -458,14 +511,15 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
+            tile_map.tile_map[r][c] = random.choice(['i','n','k','s']) 
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife") 
+            self.message.append("You just got a candy knife!") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
+            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 

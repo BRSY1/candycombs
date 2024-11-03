@@ -72,6 +72,28 @@ candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, confi
 speed_ui = pygame.image.load("assets/items/speed.png")
 speed_ui = pygame.transform.scale(speed_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
+#Decorations
+bone = pygame.image.load("assets/decorations/bone.png")
+bone = pygame.transform.scale(bone , (config.TILE_SIZE, config.TILE_SIZE))
+
+bookshelf= pygame.image.load("assets/decorations/bookshelf.png")
+bookshelf= pygame.transform.scale(bookshelf, (config.TILE_SIZE, config.TILE_SIZE))
+
+orb = pygame.image.load("assets/decorations/orb.png")
+orb = pygame.transform.scale(orb, (config.TILE_SIZE, config.TILE_SIZE))
+
+skull = pygame.image.load("assets/decorations/skull.png")
+skull = pygame.transform.scale(skull, (config.TILE_SIZE, config.TILE_SIZE))
+
+
+spiderWeb= pygame.image.load("assets/decorations/skullAndBone.png")
+spiderWeb= pygame.transform.scale(spiderWeb, (config.TILE_SIZE, config.TILE_SIZE))
+
+witchesHat = pygame.image.load("assets/decorations/updatedWitchesHat.png")
+witchesHat= pygame.transform.scale(witchesHat, (config.TILE_SIZE, config.TILE_SIZE))
+
+cauldron = pygame.image.load("assets/decorations/updatedCauldron.png")
+cauldron= pygame.transform.scale(cauldron, (config.TILE_SIZE, config.TILE_SIZE))
 
 
 
@@ -101,5 +123,15 @@ tiles = {
     '1': diamond, #top left
     '2': spade, #top right
     '3': club, #bottom left
-    '4': heart #bottom right
+    '4': heart, #bottom right
+
+
+    'u': bone,
+    'v': bookshelf,
+    'w': orb,
+    'x': skull,
+    'y': spiderWeb,
+    'z': witchesHat,
+    'Z': cauldron
+    
 }

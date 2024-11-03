@@ -338,16 +338,17 @@ class Map:
             self.bresenhams((mid_x, midpoint1[1]), (mid_x, midpoint2[1]))  # Vertical down/up to mid_y
             self.bresenhams((mid_x, midpoint2[1]), midpoint2)  # Horizontal to midpoint2
 
-
-    # def add_treasure(self):
-    #     treasure_count = random.randint(self.treasure_count-1,self.treasure_count)
-    #     while treasure_count>0:
-    #         x = random.randint(0,99)
-    #         y = random.randint(0,99)
-    #         if self.grid[x][y] != ".":
-    #             self.grid[x][y] = "t"
-    #             treasure_count-=1
-
+    def add_decor(self):
+        safe=["a","b","c","d"]
+        decors = ["u","v","w","x","y","z", "Z"] 
+        
+        for room in self.rooms:
+            for i in range(3):
+                i = random.randint(room.left,room.right)
+                j = random.randint(room.top,room.bottom)
+                if self.grid[i][j] in safe:
+                    self.grid[i][j] = random.choice(decors)
+                    
 
 
 def generate_map(array_size, num_rooms,room_length, room_width):
@@ -356,8 +357,9 @@ def generate_map(array_size, num_rooms,room_length, room_width):
     myMap.initialise_rooms()
     myMap.connect_rooms(myMap.MST())
     myMap.add_rooms()
-    # myMap.add_treasure()
-    myMap.print_grid()
+    myMap.add_decor()
+    #myMap.print_grid()
+    
     return myMap
 
 #Map.generate_map(empty array size, number of rooms, room length, room width)
