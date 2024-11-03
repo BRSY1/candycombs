@@ -30,6 +30,8 @@ class Game:
         self.lastCandyGenerationTime = 0
         self.candies = []
         self.powerUpIndex = -1
+        self.powerUpLast = 0
+        self.powerUpCooldown = 10
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -44,8 +46,6 @@ class Game:
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
                     self.openChest(playerYPos, playerXPos)
 
-                if event.key == pygame.K_p and tile_map.tile_map[playerYPos][playerXPos] == 'k':
-                    self.pickUpPowerUp(playerYPos, playerXPos)
 
     def is_walkable(self, tilex, tiley):
         # Check bounds
@@ -57,7 +57,7 @@ class Game:
 
     def powerUp(self):
         playerXPos, playerYPos = self.player.tilex, self.player.tiley
-        if tile_map.tile_map[playerYPos][playerXPos] == 'k':
+        if tile_map.tile_map[playerYPos][playerXPos] == 'k' or tile_map.tile_map[playerYPos][playerXPos] == 's':
             self.pickUpPowerUp(playerYPos, playerXPos)
 
 
@@ -71,7 +71,7 @@ class Game:
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
-        print(lavaTile[0])
+        
         for i in range(0,len(lavaTile)):
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 self.player.candy -= 5
@@ -99,6 +99,13 @@ class Game:
                     agent.candy -= candy_stolen
                     self.player.candy += candy_stolen
                     self.powerUpIndex = -1
+
+            if self.powerUpIndex == constants.SPEED:
+                self.powerUpLast = pygame.time.get_ticks()
+                self.powerUpIndex = -1
+                config.SPEED *= 2
+                print(config.SPEED)
+        
                     
 
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
@@ -125,6 +132,14 @@ class Game:
         player_draw_y = config.SCREEN_HEIGHT // 2 - self.player.rect.height // 2
         self.screen.blit(self.player.image, (player_draw_x, player_draw_y))
 
+
+    def resetPowerUps(self):
+        now = pygame.time.get_ticks()
+        if now - self.powerUpLast > self.powerUpCooldown:
+            config.SPEED = config.BASESPEED
+            
+        
+
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
         visionSurface.fill((0,0,0,240))
@@ -145,7 +160,7 @@ class Game:
 
         time_amount = 3
         candy_collected = self.player.candy
-        powerUp_index = 0
+        
 
         candy_ui = pygame.image.load("assets/ui/candy.png")
         scaled_candy_ui = pygame.transform.scale(candy_ui, (candy_ui.get_width() * 12, candy_ui.get_height() * 12)) 
@@ -177,9 +192,10 @@ class Game:
 
         # render current powerup
         if self.powerUpIndex != -1:
-            powerUpImage = tile_map.powerUps[constants.KNIFE]
+            powerUpImage = tile_map.powerUps[self.powerUpIndex]
             scaledPowerupImage = pygame.transform.scale(powerUpImage, (powerup_ui.get_width() * 5, powerup_ui.get_height() * 5))
             self.screen.blit(scaledPowerupImage, (config.SCREEN_WIDTH-(17 * 12), 50))
+
 
         #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
         #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
@@ -227,6 +243,7 @@ class Game:
             self.createVignetteEffect()
             self.valuables_UI()
             self.powerUp()
+            self.resetPowerUps()
             pygame.display.flip()
 
     def drawTileMap(self):
@@ -264,11 +281,16 @@ class Game:
                     self.candies.append((row_index, col_index))
 
     def openChest(self, r, c):
-        tile_map.tile_map[r][c] = 'k'
+        tile_map.tile_map[r][c] = random.choice(['k','s'])
+        print (tile_map.tile_map[r][c])
 
     def pickUpPowerUp(self, r, c):
+        if tile_map.tile_map[r][c] == 'k':
+            self.powerUpIndex = constants.KNIFE
+        elif tile_map.tile_map[r][c] == 's':
+            self.powerUpIndex = constants.SPEED
         tile_map.tile_map[r][c] = 'a'
-        self.powerUpIndex = constants.KNIFE
+        
 
         
 
