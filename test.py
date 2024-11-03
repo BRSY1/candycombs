@@ -175,6 +175,17 @@ class Game:
                         self.hardTile_activ = 1
                     if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
                         self.casinoTile_activ = 1
+                    if self.casinoTile_activ == 1:
+                        if event.key == pygame.K_1:
+                            self.casino_op1 = 1
+                        if event.key == pygame.K_1:
+                            self.casino_op1 = 2
+                        if event.key == pygame.K_1:
+                            self.casino_op1 = 3
+                        if event.key == pygame.K_1:
+                            self.casino_op1 = 4
+                        if event.key == pygame.K_x:
+                            self.exit = 1
                 elif event.type == game.MESSAGE_POP:
                     if self.message:
                         self.messagePop()
