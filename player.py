@@ -7,7 +7,7 @@ class Player(sprite.Sprite):
     def __init__(self, images):
         super().__init__()
         # images
-        # r: powerUp indices (e.g. default: 0, knife: 1, night_vision: 2)
+        # r: powerUp indices (e.g. default: 0, knife: 1, night_vision: 2, invisibility 3)
         # c: standing: 0, walking: 1, stabbing: 2
         
         self.images = [list(map(pygame.image.load, row)) for row in images]
@@ -33,6 +33,7 @@ class Player(sprite.Sprite):
         self.is_attacking = False
         self.lastAttackTime = -1
         self.night_vis = False
+        self.is_invisible = False
     
     def updateAnimation(self):
         # use an if statement to handle the case where the default animation is used for a special powerup
@@ -42,6 +43,9 @@ class Player(sprite.Sprite):
             animationIndex = 1
         elif self.night_vis:
             animationIndex = 2
+        elif self.is_invisible:
+            animationIndex = 3
+
 
         if self.is_attacking:
             self.animate_frame += self.animate_speed
