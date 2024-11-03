@@ -99,7 +99,7 @@ class Game:
         if tiley < 0 or tiley >= len(tile_map.tile_map) or tilex < 0 or tilex >= len(tile_map.tile_map[0]):
             return False  # Out of bounds (collision)
 
-        return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
+        return (tile_map.tile_map[tiley][tilex] not in ['.', 'l'])  # Check if the tile is walkable
 
     def powerUp(self):
         playerXPos, playerYPos = self.player.tilex, self.player.tiley
@@ -435,12 +435,10 @@ class Game:
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
 
-    
-
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                if tile_type not in ['.', 't', 'l', 'e', 'm', 'h'] and random.random() < 0.01:
+                if tile_type not in ['.', 't', 'l', 'e', 'm', 'h'] and random.random() < 0.04:
                     self.candies.append((row_index, col_index))
 
     def openChest(self, r, c):
