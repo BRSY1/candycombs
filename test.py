@@ -186,9 +186,10 @@ class Game:
             
             elif event.type == pygame.KEYUP:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
-                    self.player.stop()
+                        self.player.stop()
 
                 playerXPos, playerYPos = self.player.tilex, self.player.tiley
+            
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
                     self.openChest(playerYPos, playerXPos)
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
