@@ -184,31 +184,31 @@ class Game:
                         end_time = time.time() + 90
             
             elif event.type == pygame.KEYUP:
-                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
-                    self.player.stop()
+                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                        self.player.stop()
 
-                playerXPos, playerYPos = self.player.tilex, self.player.tiley
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
-                    self.openChest(playerYPos, playerXPos)
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
-                    self.easyTile_activ = 1
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
-                    self.mediumTileTil_activ = 1
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
-                    self.hardTile_activ = 1
-                if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
-                    self.casinoTile_activ = 1
-                if self.casinoTile_activ == 1:
-                    if event.key == pygame.K_1:
-                        self.casino_op1 = 1
-                    if event.key == pygame.K_2:
-                        self.casino_op1 = 2
-                    if event.key == pygame.K_3:
-                        self.casino_op1 = 3
-                    if event.key == pygame.K_4:
-                        self.casino_op1 = 4
-                    if event.key == pygame.K_x:
-                        self.exit = 1
+                    playerXPos, playerYPos = self.player.tilex, self.player.tiley
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                        self.openChest(playerYPos, playerXPos)
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
+                        self.easyTile_activ = 1
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
+                        self.mediumTileTil_activ = 1
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
+                        self.hardTile_activ = 1
+                    if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
+                        self.casinoTile_activ = 1
+                    if self.casinoTile_activ == 1:
+                        if event.key == pygame.K_1:
+                            self.casino_op1 = 1
+                        if event.key == pygame.K_2:
+                            self.casino_op1 = 2
+                        if event.key == pygame.K_3:
+                            self.casino_op1 = 3
+                        if event.key == pygame.K_4:
+                            self.casino_op1 = 4
+                        if event.key == pygame.K_x:
+                            self.exit = 1
             elif event.type == game.MESSAGE_POP:
                     if self.message:
                         self.messagePop()
