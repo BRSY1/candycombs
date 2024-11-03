@@ -14,7 +14,7 @@ end_time = time.time() + 200
 class Game:
     MESSAGE_POP = pygame.USEREVENT + 1
 
-    def __init__(self):
+    def __init__(self, isTraining=False):
         pygame.init()
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
