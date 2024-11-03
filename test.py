@@ -35,7 +35,7 @@ class Game:
         self.candies = []
         self.player.powerUpIndex = -1
         self.powerUpLast = 0
-        self.powerUpCooldown = 10
+        self.powerUpCooldown = 20000
         self.time_of_moves = []
         self.vignetteColourR = 0
         self.vignetteColourG = 0
@@ -113,7 +113,7 @@ class Game:
             if self.player.powerUpIndex == constants.SPEED:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
-                config.SPEED *= 5
+                config.SPEED *= 3
                 print(config.SPEED)
         
                     
