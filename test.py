@@ -19,7 +19,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.player = player.Player("assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png")
         self.agent1 = agent.Agent("assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png")
-        self.agent2 = agent.Agent("assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png")
+        self.agent2 = agent.Agent("assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png")
 
         self.agent_group = []
         self.agent_group.append(self.agent1) # can make this a for loop
@@ -56,10 +56,30 @@ class Game:
 
         return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
 
+    def powerUp(self):
+        playerXPos, playerYPos = self.player.tilex, self.player.tiley
+        if tile_map.tile_map[playerYPos][playerXPos] == 'k':
+            self.pickUpPowerUp(playerYPos, playerXPos)
+
+    def lavaBlock(self):
+        value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                #print(tile_type)
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+        for i in range(0,len(lavaTile)):
+            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
+                self.player.candy -= 5
+
     def move(self):
+
         # Store the previous position
         prevx = self.player.rect.x
         prevy = self.player.rect.y
+    
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -72,10 +92,12 @@ class Game:
             self.player.moveDown()
         if keys[pygame.K_SPACE]:
             for agent in self.agent_group:
-                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
+                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley and self.powerUpIndex == constants.KNIFE:
                     candy_stolen = agent.candy // 5
                     agent.candy -= candy_stolen
                     self.player.candy += candy_stolen
+                    self.powerUpIndex = -1
+                    
 
         prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
         prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
@@ -224,6 +246,7 @@ class Game:
             self.handleEvent()
             self.createVignetteEffect()
             self.valuables_UI()
+            self.powerUp()
             pygame.display.flip()
 
     def drawTileMap(self):
