@@ -430,9 +430,10 @@ class Game:
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife") 
+            self.message.append("You just got a candy knife!") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
+            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 
