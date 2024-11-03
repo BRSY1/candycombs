@@ -21,7 +21,8 @@ class Game:
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
-                                     ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"]])
+                                     ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"],
+                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"]])
         self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
@@ -38,7 +39,8 @@ class Game:
         self.candies = []
         self.player.powerUpIndex = -1
         self.powerUpLast = 0
-        self.powerUpCooldown = 20000
+        self.powerUpCooldown = 15000
+        self.time_of_moves = []
         self.vignetteColourR = 0
         self.vignetteColourG = 0
         self.vignetteColourB = 0
@@ -144,6 +146,33 @@ class Game:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
                 config.SPEED *= 3
+            
+            if self.player.powerUpIndex == constants.NIGHT_VISION:
+                self.powerUpLast = pygame.time.get_ticks()
+                self.player.powerUpIndex = -1
+                self.player.night_vis = True
+                
+            
+            
+                
+        
+                    
+
+        value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+
+                value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
 
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
@@ -241,6 +270,7 @@ class Game:
         now = pygame.time.get_ticks()
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
+            self.night_vis = False
             
         
 
@@ -352,7 +382,8 @@ class Game:
             self.player.updateAnimation()
             self.moveAgents()
             self.handleEvent()
-            self.createVignetteEffect()
+            if not self.player.night_vis:
+                self.createVignetteEffect()
             self.valuables_UI()
             self.powerUp()
             self.resetPowerUps()
@@ -388,6 +419,8 @@ class Game:
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
 
+    
+
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
@@ -396,7 +429,7 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['i','k','s','n']) 
+            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
