@@ -8,8 +8,8 @@ import torch.nn.functional as F
 import model
 
 class Agent(player.Player):
-    def __init__(self, image1, image2):
-        super().__init__(image1, image2)
+    def __init__(self, images):
+        super().__init__(images)
         self.grid = []
         self.training = False
         self.model = model.model()
