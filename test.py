@@ -34,6 +34,9 @@ class Game:
         self.candies = []
         self.powerUpIndex = -1
         self.time_of_moves = []
+        self.vignetteColourR = 0
+        self.vignetteColourG = 0
+        self.vignetteColourB = 0
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -121,12 +124,16 @@ class Game:
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 if len(self.time_of_moves) < 2:
                     self.player.candy -= 5
+                    self.vignetteColorR = 255
                     self.time_of_moves.append(current_time_2)
                 else:
                     print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
                     if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
                         self.player.candy -= 5
+                        self.vignetteColorR = 255
                         self.time_of_moves.append(current_time_2)
+            else:
+                self.vignetteColorR = 0
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -150,11 +157,11 @@ class Game:
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
-        visionSurface.fill((0,0,0,240))
+        visionSurface.fill((self.vignetteColorR, self.vignetteColourG, self.vignetteColourB,240))
         center = (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2) 
         for radius in range(config.VISION_RADIUS, 0, -30):
             alpha = int(240 * (radius / config.VISION_RADIUS)) 
-            pygame.draw.circle(visionSurface, (0,0,0,0 + alpha), center, radius)
+            pygame.draw.circle(visionSurface, (self.vignetteColorR, self.vignetteColourG, self.vignetteColourB,0 + alpha), center, radius)
         self.screen.blit(visionSurface, (0, 0))
 
     def valuables_UI(self):
