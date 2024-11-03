@@ -223,10 +223,13 @@ class Game:
 
 
     def casinoTiles(self):
+        top = 450
+        left = 180
         if self.casinoTile_activ == 1:
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
             self.screen.blit(scaled_trivia_ui, (450, 180))
+
 
 
     def resetPowerUps(self):
@@ -346,6 +349,7 @@ class Game:
             if not self.player.night_vis:
                 self.createVignetteEffect()
             self.quizTiles()
+            self.casinoTiles()
             self.valuables_UI()
             self.powerUp()
             self.resetPowerUps()
