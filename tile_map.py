@@ -131,6 +131,7 @@ tiles = {
     'w': orb,
     'x': skull,
     'y': spiderWeb,
-    'z': witchesHat
+    'z': witchesHat,
+    'Z': cauldron
     
 }

@@ -340,7 +340,7 @@ class Map:
 
     def add_decor(self):
         safe=["a","b","c","d"]
-        decors = ["u","v","w","x","y","z"]
+        decors = ["u","v","w","x","y","z", "Z"] 
         
         for room in self.rooms:
             for i in range(3):
