@@ -17,7 +17,7 @@ class Agent(player.Player):
         if self.training == True:
             self.epsilon = 0.95
             self.lr = 1e-3
-            self.optimiser = torch.optim.Adam(self.model.parameters(), lr=self.lr)
+            self.optimiser = torch.optim.SGD(self.model.parameters(), lr=self.lr)
 
     def updateGrid(self):
         self.grid = []
@@ -31,7 +31,7 @@ class Agent(player.Player):
                     self.grid[i][j] = 0
                 elif self.grid[i][j] == 'c':
                     self.grid[i][j] = 1
-                else: 
+                else:
                     self.grid[i][j] = 2
         
 
@@ -45,9 +45,16 @@ class Agent(player.Player):
         x = torch.tensor(self.grid, dtype=torch.float32)
         action_values = self.model.forward(x)
 
+        if abs(self.speedx**2 + self.speedy**2) > 9:
+            self.reward+=1
+
         # up is 0, right is 1, down is two, left is 3
-        direction = torch.argmax(action_values)
-        value = torch.max(action_values)
+        if random.choice(range(1, 10)) != 1:
+            direction = torch.argmax(action_values)
+        else:
+            direction = random.choice(range(1, 4))
+
+        value = action_values[direction]
 
         if direction == 0:
             self.speedy += 1
