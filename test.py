@@ -25,9 +25,17 @@ def getLocation():
 
 class Game:
     MESSAGE_POP = pygame.USEREVENT + 1
+    
+
 
     def __init__(self, isTraining=False):
         pygame.init()
+        pygame.mixer.init()
+
+        # Load and play background music
+        pygame.mixer.music.load("assets/bgm.mp3")
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
