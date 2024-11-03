@@ -57,7 +57,6 @@ class Agent(player.Player):
         # value = action_values[direction]
 
         direction = random.randint(0,4)
-        print(direction)
         if direction == 0:
             self.speedy += 1
         elif direction == 1:

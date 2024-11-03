@@ -360,7 +360,7 @@ class Game:
                     for line in sub_array:
                         trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
                         question_text = trivia_question.render(f"{line}", True, (255,255,255))
-                        self.screen.blit(question_text, (400,400+offset))
+                        self.screen.blit(question_text, (500,400+offset))
                         offset += 50
                     answer = easy[i][5]
                     chosen = -1
