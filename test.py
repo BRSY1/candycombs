@@ -268,7 +268,9 @@ class Game:
 
     def quizTiles(self):
         if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
-            pygame.draw.rect(self.screen, (0,0,0), pygame.Rect(100, 100, 200, 100))
+            trivia_ui = pygame.image.load("assets/ui/trivia.png")
+            scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+            self.screen.blit(scaled_trivia_ui, (450, 180))
 
 
 
@@ -280,7 +282,6 @@ class Game:
             self.player.is_invisible = False
             
             
-        
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -386,12 +387,12 @@ class Game:
             self.move()
             self.tileFinding()
             self.lavaTileActivation()
-            self.quizTiles()
             self.player.updateAnimation()
             self.moveAgents()
             self.handleEvent()
             if not self.player.night_vis:
                 self.createVignetteEffect()
+            self.quizTiles()
             self.valuables_UI()
             self.powerUp()
             self.resetPowerUps()
