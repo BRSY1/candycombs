@@ -9,6 +9,7 @@ import agent
 
 end_time = time.time() + 200
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -30,6 +31,7 @@ class Game:
         self.lastCandyGenerationTime = 0
         self.candies = []
         self.powerUpIndex = -1
+        self.time_of_moves = []
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -54,13 +56,10 @@ class Game:
 
         return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
 
-
     def powerUp(self):
         playerXPos, playerYPos = self.player.tilex, self.player.tiley
         if tile_map.tile_map[playerYPos][playerXPos] == 'k':
             self.pickUpPowerUp(playerYPos, playerXPos)
-
-
 
     def lavaBlock(self):
         value = 0
@@ -100,9 +99,32 @@ class Game:
                     self.powerUpIndex = -1
                     
 
+        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
+        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
+        time_of_moves = []
+        value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                #print(tile_type)
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
+        current_time_2 = time.time()
+        for i in range(0,len(lavaTile)):
+            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
+                if len(self.time_of_moves) < 2:
+                    self.player.candy -= 5
+                    self.time_of_moves.append(current_time_2)
+                else:
+                    print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
+                    if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
+                        self.player.candy -= 5
+                        self.time_of_moves.append(current_time_2)
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -223,7 +245,6 @@ class Game:
         while self.is_running:
             self.clock.tick(config.FPS)
             self.drawTileMap()
-            self.lavaBlock()
             self.move()
             self.player.updateAnimation()
             self.moveAgents()
