@@ -81,7 +81,7 @@ class Game:
         self.agent16 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], None, None)
 
 
-        self.agent_group = [self.agent1, self.agent2, self.agent3, self.agent4, self.agent5, self.agent6, self.agent7, self.agent8, self.agent9, self.agent10]
+        self.agent_group = [self.agent1, self.agent2, self.agent3, self.agent4, self.agent5, self.agent6, self.agent7, self.agent8, self.agent9, self.agent10, self.agent11, self.agent12, self.agent13, self.agent14, self.agent15]
         
         self.offsetx = 0
         self.offsety = 0
@@ -106,7 +106,7 @@ class Game:
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
         self.casinoTile_activ = 0
-        self.casino_opt1 = 0
+        self.casino_op1 = 0
         self.casino_reward = 0
 
         self.easyTile = [[0, 0],[0,0]]
@@ -181,36 +181,35 @@ class Game:
                     if event.key == pygame.K_RETURN:
                         self.is_load_screen = False
                         global end_time
-                        end_time = time.time() + 300
+                        end_time = time.time() + 90
             
-            else:
-                if event.type == pygame.KEYUP:
-                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
-                        self.player.stop()
+            elif event.type == pygame.KEYUP:
+                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                    self.player.stop()
 
-                    playerXPos, playerYPos = self.player.tilex, self.player.tiley
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
-                        self.openChest(playerYPos, playerXPos)
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
-                        self.easyTile_activ = 1
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
-                        self.mediumTileTil_activ = 1
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
-                        self.hardTile_activ = 1
-                    if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
-                        self.casinoTile_activ = 1
-                    if self.casinoTile_activ == 1:
-                        if event.key == pygame.K_1:
-                            self.casino_op1 = 1
-                        if event.key == pygame.K_1:
-                            self.casino_op1 = 2
-                        if event.key == pygame.K_1:
-                            self.casino_op1 = 3
-                        if event.key == pygame.K_1:
-                            self.casino_op1 = 4
-                        if event.key == pygame.K_x:
-                            self.exit = 1
-                elif event.type == game.MESSAGE_POP:
+                playerXPos, playerYPos = self.player.tilex, self.player.tiley
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                    self.openChest(playerYPos, playerXPos)
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
+                    self.easyTile_activ = 1
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
+                    self.mediumTileTil_activ = 1
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
+                    self.hardTile_activ = 1
+                if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
+                    self.casinoTile_activ = 1
+                if self.casinoTile_activ == 1:
+                    if event.key == pygame.K_1:
+                        self.casino_op1 = 1
+                    if event.key == pygame.K_2:
+                        self.casino_op1 = 2
+                    if event.key == pygame.K_3:
+                        self.casino_op1 = 3
+                    if event.key == pygame.K_4:
+                        self.casino_op1 = 4
+                    if event.key == pygame.K_x:
+                        self.exit = 1
+            elif event.type == game.MESSAGE_POP:
                     if self.message:
                         self.messagePop()
 
@@ -283,6 +282,11 @@ class Game:
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
                 
+            
+            if self.player.powerUpIndex == constants.INVISIBILITY:
+                self.powerUpLast = pygame.time.get_ticks()
+                self.player.powerUpIndex = -1
+                self.player.is_invisible = True
             
             
                 
@@ -489,7 +493,7 @@ class Game:
                     for line in sub_array:
                         trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
                         question_text = trivia_question.render(f"{line}", True, (255,255,255))
-                        self.screen.blit(question_text, (400,400+offset))
+                        self.screen.blit(question_text, (500,400+offset))
                         offset += 50
 
                     #answer text
@@ -563,7 +567,7 @@ class Game:
                     for line in sub_array:
                         trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
                         question_text = trivia_question.render(f"{line}", True, (255,255,255))
-                        self.screen.blit(question_text, (400,400+offset))
+                        self.screen.blit(question_text, (500,400+offset))
                         offset += 50
 
                     #answer text
@@ -645,38 +649,37 @@ class Game:
             self.screen.blit(scaled_wheel_ui, (800, top+50))
             random_number = 0
             if self.animation != 1:
-                if (self.casino_opt1 == 1):
+                if (self.casino_op1 == 1):
                     temp = (self.player.candy) // 8
                     self.bet_amount = temp
                     self.player.candy = (self.player.candy) - temp
                     self.animation = 1
                     self.animation_type = 0
-                if (self.casino_opt1 == 2):
+                if (self.casino_op1 == 2):
                     temp = (self.player.candy) // 4
                     self.bet_amount = self.player.candy
                     self.player.candy = (self.player.candy) - temp
                     self.animation = 1
                     self.animation_type = 1
-                if (self.casino_opt1 == 3):
+                if (self.casino_op1 == 3):
                     temp = (self.player.candy) // 2
                     self.bet_amount = self.player.candy
                     self.player.candy = (self.player.candy) - temp
                     self.animation = 1
                     self.animation_type = 2
-                if (self.casino_opt1 == 4):
+                if (self.casino_op1 == 4):
                     self.bet_amount = self.player.candy
                     self.player.candy = 0
                     self.animation = 1
                     self.animation_type = 3
-                if (self.casino_opt1 == 1) or (self.casino_opt1 == 2) or (self.casino_opt1 == 3) or (self.casino_opt1 == 4):
+                if (self.casino_op1 == 1) or (self.casino_op1 == 2) or (self.casino_op1 == 3) or (self.casino_op1 == 4):
                     random_number = random.randint(0,3)
-                    temp2 = 0
                     if (random_number == 1) or (random_number == 0) or (random_number == 2):
-                        self.casino_reward = temp * random_number
+                        self.casino_reward = self.bet_amount * random_number
                     if (random_number == 3):
-                        self.casino_reward = temp // 2
+                        self.casino_reward = self.bet_amount // 2
                     self.player.candy += self.casino_reward
-                    self.casino_opt1 = 0
+                    self.casino_op1 = 0
             if self.animation == 1 and self.animation_time < 7:
                 if (pygame.time.get_ticks() % 15) == 0:
                     self.animation_time += 1
@@ -699,8 +702,7 @@ class Game:
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
             self.night_vis = False
-            
-        
+            self.player.is_invisible = False
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -845,12 +847,13 @@ class Game:
             self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
+            self.message.append("You just got an speed potion")
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
-            self.message.append("You just got an invisibility potion!") 
+            self.message.append("You just got an invisibility potion") 
         elif tile_map.tile_map[r][c] == 'n':
             self.player.powerUpIndex = constants.NIGHT_VISION
-            self.message.append("You just got a night vision potion!")
+            self.message.append("You just got a night vision potion")
         tile_map.tile_map[r][c] = 'a'
 
     def messageMaintainer(self):
