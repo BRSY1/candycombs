@@ -96,6 +96,7 @@ class Game:
             for agent in self.agent_group:
                 if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley and self.powerUpIndex == constants.KNIFE:
                     candy_stolen = agent.candy // 5
+                    agent.reward -= candy_stolen
                     agent.candy -= candy_stolen
                     self.player.candy += candy_stolen
                     self.powerUpIndex = -1
@@ -240,6 +241,7 @@ class Game:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
+                agent.reward += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 

@@ -11,7 +11,13 @@ class Agent(player.Player):
     def __init__(self, image1, image2):
         super().__init__(image1, image2)
         self.grid = []
+        self.training = False
         self.model = model.model()
+        self.reward = 0
+        if self.training == True:
+            self.epsilon = 0.95
+            self.lr = 1e-3
+            self.optimiser = torch.optim.Adam(self.model.parameters(), lr=self.lr)
 
     def updateGrid(self):
         self.grid = []
@@ -55,7 +61,15 @@ class Agent(player.Player):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         
-        self.updateGrid()
-        x = torch.tensor(self.grid, dtype=torch.float32)
-        next_action_values = self.model(x)
-        next_value = torch.max(next_action_values)
+        if self.training == True:
+            self.updateGrid()
+            x = torch.tensor(self.grid, dtype=torch.float32)
+            next_action_values = self.model(x)
+            next_value = torch.max(next_action_values)
+
+            loss = ((self.reward + self.epsilon * next_value) - value) ** 2
+            loss.backward()
+            self.optimiser.step()
+            self.optimiser.zero_grad()
+
+            self.reward = 0
