@@ -11,6 +11,8 @@ end_time = time.time() + 200
 
 
 class Game:
+    MESSAGE_POP = pygame.USEREVENT + 1
+
     def __init__(self):
         pygame.init()
         self.is_running = True
@@ -42,6 +44,8 @@ class Game:
         self.vignetteColourB = 0
         self.message = [""]
 
+        pygame.time.set_timer(self.MESSAGE_POP, 10000)
+
     def handleEvent(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -54,6 +58,9 @@ class Game:
                 playerXPos, playerYPos = self.player.tilex, self.player.tiley
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
                     self.openChest(playerYPos, playerXPos)
+            elif event.type == game.MESSAGE_POP:
+                if self.message:
+                    self.messagePop()
 
 
     def is_walkable(self, tilex, tiley):
@@ -107,6 +114,7 @@ class Game:
                     if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
                         candy_stolen = agent.candy // 5
                         agent.candy -= candy_stolen
+                        self.message.append(f"You just stole {candy_stolen} candy")
                         self.player.candy += candy_stolen
                         self.player.powerUpIndex = -1
                         self.player.is_attacking = False
@@ -303,6 +311,7 @@ class Game:
             self.valuables_UI()
             self.powerUp()
             self.resetPowerUps()
+            self.messageMaintainer()
             self.messageBox()
             pygame.display.flip()
 
@@ -348,20 +357,49 @@ class Game:
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife!") 
+            self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion!") 
+            self.message.append("You just got a speed potion") 
         tile_map.tile_map[r][c] = 'a'
+
+    def messageMaintainer(self):
+        if len(self.message) == 4:
+            self.messagePop()
     
+    def messagePop(self):
+        if len(self.message) == 4:
+            temp3 = self.message[3]
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+            self.message[2] = temp3
+        elif len(self.message) == 3:
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+        elif len(self.message) == 2:
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+        elif len(self.message) == 1:
+            self.message = [""]
+
+
     def messageBox(self):
         i = config.SCREEN_HEIGHT
+        alpha = 180
         for message in self.message:
-            if i > config.SCREEN_HEIGHT - 200:
-                font_msg = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 50)
-                text = font_msg.render(message, True, (255,255,255))
-                self.screen.blit(text, (50, i-20))
-                i -= 50
+            font_msg = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 50)
+            text = font_msg.render(message, True, (255,255,255))
+            text.set_alpha(255-alpha)
+            self.screen.blit(text, (50, i-100))
+            i -= 50
+            alpha -= 30
         
 
 
