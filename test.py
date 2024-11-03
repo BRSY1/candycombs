@@ -7,8 +7,10 @@ import random
 import time
 import agent
 import torch
+import textwrap
 
 end_time = time.time() + 200
+
 
 def getLocation():
     locationx, locationy = None, None
@@ -26,9 +28,6 @@ class Game:
 
     def __init__(self, isTraining=False):
         pygame.init()
-        pygame.mixer.init()
-        pygame.mixer.music.load("assets/bgm.mp3")
-        pygame.mixer.music.play(-1)
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
@@ -65,6 +64,7 @@ class Game:
         self.vignetteColourG = 0
         self.vignetteColourB = 0
         self.message = []
+        self.exit = 0
 
         self.isTraining = isTraining
 
@@ -72,13 +72,64 @@ class Game:
         self.easyTile_activ = 0
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
-        self.casinoTile_activ = 0
+
+        self.easyTile = [[0, 0],[0,0]]
+        self.mediumTile = [[0, 0],[0,0]]
+        self.hardTile = [[0, 0],[0,0]]
         self.lavaTile = [[0, 0] for _ in range(88)]
 
-        self.casino_opt1 = 0
-        self.casino_reward = 0
-        self.bet_amount = 0
-        self.exit = 0
+        self.is_load_screen = True
+        #self.player_name = ""
+        self.font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 74)
+        self.title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 100)
+
+    def displayLoadScreen(self):
+
+        self.screen.fill((0,0,0))
+
+        # title_text = self.title_font.render("CandyCombs", True, (0, 0, 0))
+        # how_to_play_text = self.font.render("How to Play", True, (50, 50, 50))
+        # movement_text = self.font.render("Movement : Arrows", True, (50, 50, 50))
+        # open_chest_text = self.font.render("Open Chest : O", True, (50, 50, 50))
+        # use_power_up_text = self.font.render("Use Power Up : Space ", True, (50, 50, 50))
+
+        # self.screen.blit(title_text, (config.SCREEN_WIDTH // 2 - title_text.get_width() // 2, 100))
+        # self.screen.blit(how_to_play_text, (config.SCREEN_WIDTH // 2 - how_to_play_text.get_width() // 2, 200))
+        
+        # instruction_y_offset = 300
+        # self.screen.blit(movement_text, (config.SCREEN_WIDTH // 2 - movement_text.get_width() // 2, instruction_y_offset))
+        # self.screen.blit(open_chest_text, (config.SCREEN_WIDTH // 2 - open_chest_text.get_width() // 2, instruction_y_offset + 75))
+        # self.screen.blit(use_power_up_text, (config.SCREEN_WIDTH // 2 - use_power_up_text.get_width() // 2, instruction_y_offset + 150))
+        instructions_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
+        title_text = self.title_font.render("CandyCombs", True, (255, 255, 255))  # Black
+        #how_to_play_text = self.font.render("How to Play", True, (169, 169, 169))  # Dark Grey
+        movement_text = instructions_font.render("Movement : Arrows", True, (255, 165, 0))  # Orange
+        open_chest_text = instructions_font.render("Open Chest : O", True, (255, 165, 0))  # Orange
+        use_power_up_text = instructions_font.render("Use Power Up : Space", True, (255, 165, 0))  # Orange
+
+        # Game objectives in grey
+        game_objective_text = self.font.render("Steal as much candy as you can", True, (0, 0, 0))  # Dark Grey
+        enter_text = self.font.render("Click Enter to Start", True, (255, 255, 255))  # Dark Grey
+
+        # Blit texts onto the screen with adjusted spacing
+        self.screen.blit(title_text, (config.SCREEN_WIDTH // 2 - title_text.get_width() // 2, 200))
+        # self.screen.blit(how_to_play_text, (config.SCREEN_WIDTH // 2 - how_to_play_text.get_width() // 2, 350))
+        
+        # Add spacing by adjusting y-coordinates for each instruction
+        self.screen.blit(movement_text, (config.SCREEN_WIDTH // 2 - movement_text.get_width() // 2, 400))
+        self.screen.blit(open_chest_text, (config.SCREEN_WIDTH // 2 - open_chest_text.get_width() // 2, 475))  # 50 pixels below
+        self.screen.blit(use_power_up_text, (config.SCREEN_WIDTH // 2 - use_power_up_text.get_width() // 2, 550))  # 100 pixels below
+
+        # Add game objective and start instruction at the bottom
+        self.screen.blit(game_objective_text, (config.SCREEN_WIDTH // 2 - game_objective_text.get_width() // 2, 600))
+        self.screen.blit(enter_text, (config.SCREEN_WIDTH // 2 - enter_text.get_width() // 2, 675))
+
+
+        pygame.display.flip()
+
+#Movement - arrows
+#Open Chest = O
+#Use power up = Space (_)
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -87,37 +138,34 @@ class Game:
                     torch.save(self.agent1.model.state_dict(), "trained_models/agent_model.pt")
                 self.is_running = False
 
-            elif event.type == pygame.KEYUP:
-                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
-                    self.player.stop()
-
-                playerXPos, playerYPos = self.player.tilex, self.player.tiley
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
-                    self.openChest(playerYPos, playerXPos)
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
-                    self.easyTile_activ = 1
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
-                    self.mediumTileTil_activ = 1
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
-                    self.hardTile_activ = 1
-                if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
-                    self.casinoTile_activ = 1
-                if self.casinoTile_activ == 1:
-                    if event.key == pygame.K_1:
-                        self.casino_opt1 = 1
-                    if event.key == pygame.K_2:
-                        self.casino_opt1 = 2
-                    if event.key == pygame.K_3:
-                        self.casino_opt1 = 3
-                    if event.key == pygame.K_4:
-                        self.casino_opt1 = 4
-                    if event.key == pygame.K_x:
-                        self.exit = 1
-                    
-            elif event.type == game.MESSAGE_POP:
-                if self.message:
-                    self.message.pop(0)
+            if self.is_load_screen:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        self.is_load_screen = False
+                        global end_time
+                        end_time = time.time() + 300
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.player_name = self.player_name[:-1]
+                    else:
+                        self.player_name += event.unicode
             
+            else:
+                if event.type == pygame.KEYUP:
+                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                        self.player.stop()
+
+                    playerXPos, playerYPos = self.player.tilex, self.player.tiley
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                        self.openChest(playerYPos, playerXPos)
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
+                        self.easyTile_activ = 1
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
+                        self.mediumTileTil_activ = 1
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
+                        self.hardTile_activ = 1
+                elif event.type == game.MESSAGE_POP:
+                    if self.message:
+                        self.messagePop()
 
 
     def is_walkable(self, tilex, tiley):
@@ -187,12 +235,7 @@ class Game:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
-            
-            if self.player.powerUpIndex == constants.INVISIBILITY:
-                self.powerUpLast = pygame.time.get_ticks()
-                self.player.powerUpIndex = -1
-                self.player.is_invisible = True
-            
+                
             
             
                 
@@ -251,6 +294,12 @@ class Game:
                 if tile_type == 'l':
                     self.lavaTile[valueLava] = [row_index,col_index]
                     valueLava+=1
+                if tile_type == 'e':
+                    self.easyTile[valueEasy] = [row_index,col_index]
+                if tile_type == 'm':
+                    self.easyTile[valueMedium] = [row_index,col_index]
+                if tile_type == 'h':
+                    self.easyTile[valueHard] = [row_index,col_index]
 
 
     def lavaTileActivation(self):
@@ -279,90 +328,254 @@ class Game:
         medium = constants.medium_questions
         hard = constants.hard_questions
 
+        keys = pygame.key.get_pressed()
 
-        if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
-            trivia_ui = pygame.image.load("assets/ui/trivia.png")
-            scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
-            self.screen.blit(scaled_trivia_ui, (450, 180))
-            trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
-            text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
-            self.screen.blit(text, (500+32, 180+16))
+        if(self.easyTile_activ == 1):
+                if self.player.candy < 2:
+                    self.message.append("You cannot afford this")
+                    self.exit = 1
+                else:
+                    trivia_ui = pygame.image.load("assets/ui/trivia.png")
+                    scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+                    self.screen.blit(scaled_trivia_ui, (450, 180))
+                    trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+                    text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
+                    self.screen.blit(text, (500+32, 180+16))
 
-            one = pygame.image.load("assets/ui/1.png")
-            one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
-            self.screen.blit(one, (480, 500))
+                    one = pygame.image.load("assets/ui/1.png")
+                    one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+                    self.screen.blit(one, (480, 500))
 
-            two = pygame.image.load("assets/ui/2.png")
-            two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
-            self.screen.blit(two, (860, 500))
+                    two = pygame.image.load("assets/ui/2.png")
+                    two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+                    self.screen.blit(two, (860, 500))
 
-            three = pygame.image.load("assets/ui/3.png")
-            three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
-            self.screen.blit(three, (480, 600))
+                    three = pygame.image.load("assets/ui/3.png")
+                    three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+                    self.screen.blit(three, (480, 600))
 
-            four = pygame.image.load("assets/ui/4.png")
-            four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
-            self.screen.blit(four, (860, 600))
+                    four = pygame.image.load("assets/ui/4.png")
+                    four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+                    self.screen.blit(four, (860, 600))
+                    i = self.randomQuestion
+                    offset = 0
+                    question = easy[i][0]
+                    sub_array = question.split("$")
+                    for line in sub_array:
+                        trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+                        question_text = trivia_question.render(f"{line}", True, (255,255,255))
+                        self.screen.blit(question_text, (400,400+offset))
+                        offset += 50
+                    answer = easy[i][5]
+                    chosen = -1
+                    
 
-            keys = pygame.key.get_pressed()
+                    #answer text
+                    oneAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    oneAnswerText = oneAnswer.render(f"{easy[i][1]}", True, (255,255,255))
+                    self.screen.blit(oneAnswerText, (550,600))
+
+                    twoAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    twoAnswerText = twoAnswer.render(f"{easy[i][2]}", True, (255,255,255))
+                    self.screen.blit(twoAnswerText, (930,600))
+
+                    threeAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    threeAnswerText = threeAnswer.render(f"{easy[i][3]}", True, (255,255,255))
+                    self.screen.blit(threeAnswerText, (550,700))
+
+                    fourAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    fourAnswerText = fourAnswer.render(f"{easy[i][4]}", True, (255,255,255))
+                    self.screen.blit(fourAnswerText, (930,700))
+                    
+                    if keys[pygame.K_1]:
+                        chosen = 0
+                    elif keys[pygame.K_2]:
+                        chosen = 1
+                    elif keys[pygame.K_3]:
+                        chosen = 2
+                    elif keys[pygame.K_4]:
+                        chosen = 3
+                    if chosen == answer:
+                        self.player.candy += 2
+                        self.message.append("You got it right and gained 2 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'
+                        self.exit = 1
+                    elif chosen != answer and chosen != -1:
+                        self.player.candy -= 2
+                        self.message.append("You got it wrong and lost 2 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'   
+                        self.exit = 1
+            
+        if(self.mediumTileTil_activ == 1):
+                if self.player.candy < 4:
+                    self.message.append("You cannot afford this")
+                    self.exit = 1
+                else:
+                    trivia_ui = pygame.image.load("assets/ui/trivia.png")
+                    scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+                    self.screen.blit(scaled_trivia_ui, (450, 180))
+                    trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+                    text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
+                    self.screen.blit(text, (500+32, 180+16))
+
+                    one = pygame.image.load("assets/ui/1.png")
+                    one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+                    self.screen.blit(one, (480, 500))
+
+                    two = pygame.image.load("assets/ui/2.png")
+                    two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+                    self.screen.blit(two, (860, 500))
+
+                    three = pygame.image.load("assets/ui/3.png")
+                    three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+                    self.screen.blit(three, (480, 600))
+
+                    four = pygame.image.load("assets/ui/4.png")
+                    four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+                    self.screen.blit(four, (860, 600))
+                    i = self.randomQuestion
+                    question = medium[i][0]
+                    answer = medium[i][5]
+                    chosen = -1
+                    offset = 0
+                    sub_array = question.split("$")
+                    for line in sub_array:
+                        trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+                        question_text = trivia_question.render(f"{line}", True, (255,255,255))
+                        self.screen.blit(question_text, (400,400+offset))
+                        offset += 50
+
+                    #answer text
+                    oneAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    oneAnswerText = oneAnswer.render(f"{medium[i][1]}", True, (255,255,255))
+                    self.screen.blit(oneAnswerText, (550,600))
+
+                    twoAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    twoAnswerText = twoAnswer.render(f"{medium[i][2]}", True, (255,255,255))
+                    self.screen.blit(twoAnswerText, (930,600))
+
+                    threeAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    threeAnswerText = threeAnswer.render(f"{medium[i][3]}", True, (255,255,255))
+                    self.screen.blit(threeAnswerText, (550,700))
+
+                    fourAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    fourAnswerText = fourAnswer.render(f"{medium[i][4]}", True, (255,255,255))
+                    self.screen.blit(fourAnswerText, (930,700))
+                    
+                    if keys[pygame.K_1]:
+                        chosen = 0
+                    elif keys[pygame.K_2]:
+                        chosen = 1
+                    elif keys[pygame.K_3]:
+                        chosen = 2
+                    elif keys[pygame.K_4]:
+                        chosen = 3
+                    if chosen == answer:
+                        self.player.candy += 4
+                        self.message.append("You got it right and gained 4 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'
+                        self.exit = 1
+                    elif chosen != answer and chosen != -1:
+                        self.player.candy -= 4
+                        self.message.append("You got it wrong and lost 4 candy")
+                        self.exit = 1
+
+        if(self.hardTile_activ == 1):
+                if self.player.candy < 8:
+                    self.message.append("You cannot afford this")
+                    self.exit = 1
+                else:
+                    trivia_ui = pygame.image.load("assets/ui/trivia.png")
+                    scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+                    self.screen.blit(scaled_trivia_ui, (450, 180))
+                    trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+                    text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
+                    self.screen.blit(text, (500+32, 180+16))
+
+                    one = pygame.image.load("assets/ui/1.png")
+                    one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+                    self.screen.blit(one, (480, 500))
+
+                    two = pygame.image.load("assets/ui/2.png")
+                    two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+                    self.screen.blit(two, (860, 500))
+
+                    three = pygame.image.load("assets/ui/3.png")
+                    three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+                    self.screen.blit(three, (480, 600))
+
+                    four = pygame.image.load("assets/ui/4.png")
+                    four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+                    self.screen.blit(four, (860, 600))
+                    i = self.randomQuestion
+                    question = hard[i][0]
+                    answer = hard[i][5]
+                    chosen = -1
+                    offset = 0
+                    sub_array = question.split("$")
+                    for line in sub_array:
+                        trivia_question = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+                        question_text = trivia_question.render(f"{line}", True, (255,255,255))
+                        self.screen.blit(question_text, (400,400+offset))
+                        offset += 50
+
+                    #answer text
+                    oneAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    oneAnswerText = oneAnswer.render(f"{hard[i][1]}", True, (255,255,255))
+                    self.screen.blit(oneAnswerText, (550,600))
+
+                    twoAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    twoAnswerText = twoAnswer.render(f"{hard[i][2]}", True, (255,255,255))
+                    self.screen.blit(twoAnswerText, (930,600))
+
+                    threeAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    threeAnswerText = threeAnswer.render(f"{hard[i][3]}", True, (255,255,255))
+                    self.screen.blit(threeAnswerText, (550,700))
+
+                    fourAnswer = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 25)
+                    fourAnswerText = fourAnswer.render(f"{hard[i][4]}", True, (255,255,255))
+                    self.screen.blit(fourAnswerText, (930,700))
+                    
+                    if keys[pygame.K_1]:
+                        chosen = 0
+                    elif keys[pygame.K_2]:
+                        chosen = 1
+                    elif keys[pygame.K_3]:
+                        chosen = 2
+                    elif keys[pygame.K_4]:
+                        chosen = 3
+                    if chosen == answer:
+                        self.player.candy += 8
+                        self.message.append("You got it right and gained 8 candy")
+                        tile_map.tile_map[self.player.tilex][self.player.tiley] = 'a'
+                        self.exit = 1
+                    elif chosen != answer and chosen != -1:
+                        self.player.candy -= 8
+                        self.message.append("You got it wrong and lost 8 candy")
+                        self.exit = 1
+            
+        if self.exit == 1:
+            self.easyTile_activ = 0
+            self.hardTile_activ = 0
+            self.mediumTileTil_activ = 0
+            self.randomQuestion = random.randint(0,4)
+            self.exit = 0
+
+
+            
+
 
             
 
 
 
     def casinoTiles(self):
+        top = 450
         left = 180
-        top = 300
         if self.casinoTile_activ == 1:
-            temp = 0
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
             self.screen.blit(scaled_trivia_ui, (450, 180))
-            title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
-            text_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
-            title = title_font.render(f"Casino", True, (255,255,255))
-            self.screen.blit(title, (700, 190))
-            sub_script = text_font.render(f"Bet amount", True, (255,255,255))
-            self.screen.blit(sub_script, (left+310,top))
-            option1 = text_font.render(f"Option 1: {self.player.candy//8}", True, (255,255,255))
-            self.screen.blit(option1, (left+310,top+70))
-            option2 = text_font.render(f"Option 2: {self.player.candy//4}", True, (255,255,255))
-            self.screen.blit(option2, (left+310,top+140))
-            option3 = text_font.render(f"Option 3: {self.player.candy//2}", True, (255,255,255))
-            self.screen.blit(option3, (left+310,top+210))
-            option4 = text_font.render(f"Option 4: {self.player.candy}", True, (255,255,255))
-            self.screen.blit(option4, (left+310,top+280))
-            reward = title_font.render(f"Exit: x", True, (0,255,0))
-            self.screen.blit(reward, (left+700,top+280))
-            if (self.casino_opt1 == 1):
-                temp = (self.player.candy) // 8
-                self.bet_amount = temp
-                self.player.candy = (self.player.candy) - temp
-            if (self.casino_opt1 == 2):
-                temp = (self.player.candy) // 4
-                self.bet_amount = self.player.candy
-                self.player.candy = (self.player.candy) - temp
-            if (self.casino_opt1 == 3):
-                temp = (self.player.candy) // 2
-                self.bet_amount = self.player.candy
-                self.player.candy = (self.player.candy) - temp
-            if (self.casino_opt1 == 4):
-                self.bet_amount = self.player.candy
-                self.player.candy = 0
-            if (self.casino_opt1 == 1) or (self.casino_opt1 == 2) or (self.casino_opt1 == 3) or (self.casino_opt1 == 4):
-                random_number = random.randint(0,3)
-                temp2 = 0
-                if (random_number == 1) or (random_number == 0) or (random_number == 2):
-                    self.casino_reward = temp * random_number
-                if (random_number == 3):
-                    self.casino_reward = temp // 2
-                self.player.candy += temp2
-            reward = title_font.render(f"Reward: {self.casino_reward}", True, (255,0,0))
-            self.screen.blit(reward, (left+310,top+350))
-            if self.exit == 1:
-                self.casinoTile_activ = 0
-                self.exit = 0
-            self.casino_opt1 = 0
 
 
 
@@ -370,10 +583,9 @@ class Game:
         now = pygame.time.get_ticks()
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
-            self.player.night_vis = False
-            self.player.is_invisible = False
+            self.night_vis = False
             
-            
+        
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -389,9 +601,10 @@ class Game:
         box_width = (config.SCREEN_WIDTH/2) - 200 
         box_height = 50
         #powerUps_file_location = ("","","","","")
-        countdown_time = 200
+        countdown_time = 300
         current_time = time.time()
-        remaining_time = end_time - current_time
+        if self.is_load_screen == False:
+            remaining_time = end_time - current_time
 
         time_amount = 3
         candy_collected = self.player.candy
@@ -464,14 +677,37 @@ class Game:
                 agent.rect.x = prevx
                 agent.rect.y = prevy
             
-            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1 and not self.player.is_invisible:
+            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
-    
+    def run(self):
+        while self.is_running:
+            self.clock.tick(config.FPS)
+            self.handleEvent()
+            if self.is_load_screen:
+                self.displayLoadScreen()
+            else:
+                self.drawTileMap()
+                self.move()
+                self.tileFinding()
+                self.lavaTileActivation()
+                self.quizTiles()
+                self.player.updateAnimation()
+                self.moveAgents()
+                if not self.player.night_vis:
+                    self.createVignetteEffect()
+                if self.is_load_screen == False:
+                    self.valuables_UI()
+                self.powerUp()
+                self.resetPowerUps()
+                self.messageMaintainer()
+                self.messageBox()
+                pygame.display.flip()
+
     def drawTileMap(self):
         offset_x, offset_y = self.getOffset()
         
@@ -500,6 +736,8 @@ class Game:
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
 
+    
+
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
@@ -508,15 +746,14 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['i','n','k','s']) 
+            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife!") 
+            self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 
@@ -527,7 +764,30 @@ class Game:
 
     def messageMaintainer(self):
         if len(self.message) == 4:
-            self.message.pop(0)
+            self.messagePop()
+    
+    def messagePop(self):
+        if len(self.message) == 4:
+            temp3 = self.message[3]
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+            self.message[2] = temp3
+        elif len(self.message) == 3:
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+        elif len(self.message) == 2:
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+        elif len(self.message) == 1:
+            self.message = [""]
+
 
     def messageBox(self):
         i = config.SCREEN_HEIGHT
@@ -539,78 +799,7 @@ class Game:
             self.screen.blit(text, (50, i-100))
             i -= 50
             alpha -= 30
-
-
-
-    def show_end_screen(self):
-        # Fill the screen with a background color
-        self.screen.fill((0, 0, 0))  # Black background
-
-        # Load or set font for the end screen
-        end_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
-        message_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
-
-        # Display the game over message
-        end_text = end_font.render("Game Over!", True, (255, 0, 0))  # Red color
-        end_rect = end_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 - 100))
-        self.screen.blit(end_text, end_rect)
-
-        # Display the final score or candy collected
-        final_score_text = message_font.render(f"Total Candy Collected: {self.player.candy}", True, (255, 255, 255))
-        score_rect = final_score_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2))
-        self.screen.blit(final_score_text, score_rect)
-
-        # Display restart and quit instructions
-        restart_text = message_font.render("Press Q to Quit", True, (200, 200, 200))
-        restart_rect = restart_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 + 100))
-        self.screen.blit(restart_text, restart_rect)
-
-        pygame.display.flip()  # Update the screen
-
-        # Wait for player input to restart or quit
-        waiting = True
-        while waiting:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.is_running = False
-                    waiting = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:  # Quit the game
-                        self.is_running = False
-                        waiting = False
-    def reset_game(self):
-        # Reset player position, score, etc.
-        self.player.rect.x = config.SCREEN_WIDTH // 2
-        self.player.rect.y = config.SCREEN_HEIGHT // 2
-        self.player.candy = 0
-        self.candies.clear()
-        self.lastCandyGenerationTime = 0
-        self.is_running = True
-
-    def run(self):
-        while self.is_running:
-            self.clock.tick(config.FPS)
-            self.drawTileMap()
-            self.move()
-            self.tileFinding()
-            self.lavaTileActivation()
-            self.player.updateAnimation()
-            self.moveAgents()
-            self.handleEvent()
-            if not self.player.night_vis:
-                self.createVignetteEffect()
-            self.quizTiles()
-            self.casinoTiles()
-            self.valuables_UI()
-            self.powerUp()
-            self.resetPowerUps()
-            self.messageMaintainer()
-            self.messageBox()
-
-            if time.time() > end_time:
-                self.show_end_screen()  # Display end screen
-                break  # Exit the game loop
-            pygame.display.flip()
+        
 
 #def draw_bar(screen, coins_collected, max_coins):
 #    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
