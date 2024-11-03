@@ -33,6 +33,11 @@ candy = pygame.transform.scale(candy, (config.TILE_SIZE, config.TILE_SIZE))
 candy_knife = pygame.image.load("assets/tiles/candy_knife_floor.png")
 candy_knife = pygame.transform.scale(candy_knife, (config.TILE_SIZE, config.TILE_SIZE))
 
+invisibility = pygame.image.load("assets/items/invis.png")
+invisibility = pygame.transform.scale(invisibility, (config.TILE_SIZE, config.TILE_SIZE))
+
+night_vision = pygame.image.load("assets/items/night_vision.png")
+night_vision = pygame.transform.scale(night_vision, (config.TILE_SIZE, config.TILE_SIZE))
 
 speed = pygame.image.load("assets/items/speed.png")
 speed = pygame.transform.scale(speed, (config.TILE_SIZE, config.TILE_SIZE))
@@ -67,9 +72,28 @@ candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, confi
 speed_ui = pygame.image.load("assets/items/speed.png")
 speed_ui = pygame.transform.scale(speed_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
+#Decorations
+bone = pygame.image.load("assets/decorations/bone.png")
+bone = pygame.transform.scale(bone , (config.TILE_SIZE, config.TILE_SIZE))
+
+bookshelf= pygame.image.load("assets/decorations/bookshelf.png")
+bookshelf= pygame.transform.scale(bookshelf, (config.TILE_SIZE, config.TILE_SIZE))
+
+orb = pygame.image.load("assets/decorations/orb.png")
+orb = pygame.transform.scale(orb, (config.TILE_SIZE, config.TILE_SIZE))
+
+skull = pygame.image.load("assets/decorations/skull.png")
+skull = pygame.transform.scale(skull, (config.TILE_SIZE, config.TILE_SIZE))
+
+
+spiderWeb= pygame.image.load("assets/decorations/skullAndBone.png")
+spiderWeb= pygame.transform.scale(spiderWeb, (config.TILE_SIZE, config.TILE_SIZE))
+
 powerUps = {
     constants.KNIFE: candy_knife_ui,
-    constants.SPEED: speed_ui
+    constants.SPEED: speed_ui,
+    constants.INVISIBILITY: invisibility,
+    constants.NIGHT_VISION: night_vision
 }
 
 tiles = {
@@ -85,9 +109,19 @@ tiles = {
     '.': dark_wall,
     't': chest_floor,
     'k': candy_knife,
-    's' : speed,
+    's': speed,
+    'i': invisibility,
+    'n': night_vision ,
     '1': diamond, #top left
     '2': spade, #top right
     '3': club, #bottom left
-    '4': heart #bottom right
+    '4': heart, #bottom right
+
+
+    'u': bone,
+    'v': bookshelf,
+    'w': orb,
+    'x': skull,
+    'y': spiderWeb,
+    
 }
