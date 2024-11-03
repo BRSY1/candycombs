@@ -40,6 +40,7 @@ class Game:
         self.vignetteColourR = 0
         self.vignetteColourG = 0
         self.vignetteColourB = 0
+        self.message = [""]
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -297,6 +298,7 @@ class Game:
             self.valuables_UI()
             self.powerUp()
             self.resetPowerUps()
+            self.messageBox()
             pygame.display.flip()
 
     def drawTileMap(self):
@@ -334,20 +336,27 @@ class Game:
                     self.candies.append((row_index, col_index))
 
     def openChest(self, r, c):
-        tile_map.tile_map[r][c] = random.choice(['k','s'])
+        if self.player.powerUpIndex == -1:
+            tile_map.tile_map[r][c] = random.choice(['k','s'])
         print (tile_map.tile_map[r][c])
 
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
+            self.message.append("You just got a candy knife!") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
+            self.message.append("You just got a speed potion!") 
         tile_map.tile_map[r][c] = 'a'
-        
-
-        
-
-
+    
+    def messageBox(self):
+        i = config.SCREEN_HEIGHT
+        for message in self.message:
+            if i > config.SCREEN_HEIGHT - 200:
+                font_msg = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 50)
+                text = font_msg.render(message, True, (255,255,255))
+                self.screen.blit(text, (50, i-20))
+                i -= 50
         
 
 
