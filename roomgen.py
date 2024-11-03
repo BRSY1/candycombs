@@ -174,7 +174,7 @@ class Map:
         self.central()
         centralRoom = Room(self.center_x, self.center_y, self.room_length*2, self.room_width*2,0)
         self.rooms.append(centralRoom)
-        max_attempts = 50  # Limit the number of placement attempts to avoid infinite loops
+        max_attempts = 80  # Limit the number of placement attempts to avoid infinite loops
         for i in range(self.num_rooms):
             attempts = 0
             while attempts < max_attempts:
