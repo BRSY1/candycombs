@@ -248,6 +248,22 @@ class Game:
             text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
             self.screen.blit(text, (500+32, 180+16))
 
+            one = pygame.image.load("assets/ui/1.png")
+            one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
+            self.screen.blit(one, (480, 500))
+
+            two = pygame.image.load("assets/ui/2.png")
+            two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
+            self.screen.blit(two, (860, 500))
+
+            three = pygame.image.load("assets/ui/3.png")
+            three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
+            self.screen.blit(three, (480, 600))
+
+            four = pygame.image.load("assets/ui/4.png")
+            four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
+            self.screen.blit(four, (860, 600))
+
 
 
     def casinoTiles(self):
