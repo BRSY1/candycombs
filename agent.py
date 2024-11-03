@@ -17,7 +17,7 @@ class Agent(player.Player):
         if self.training == True:
             self.epsilon = 0.95
             self.lr = 1e-3
-            self.optimiser = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+            self.optimiser = torch.optim.Adam(self.model.parameters(), lr=self.lr)
 
     def updateGrid(self):
         self.grid = []
