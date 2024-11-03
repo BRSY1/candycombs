@@ -340,13 +340,15 @@ class Map:
 
     def add_decor(self):
         safe=["a","b","c","d"]
-        decs_placed = 0
-        while decs_placed<30:
-            i = random.randint(0,99)
-            j = random.randint(0,99)
-            if self.grid[i][j] in safe:
-                self.grid[i][j] = "z"
-                decs_placed +=1
+        decors = ["u","v","w","x","y"]
+        
+        for room in self.rooms:
+            for i in range(3):
+                i = random.randint(room.left,room.right)
+                j = random.randint(room.top,room.bottom)
+                if self.grid[i][j] in safe:
+                    self.grid[i][j] = random.choice(decors)
+                    
 
 
 def generate_map(array_size, num_rooms,room_length, room_width):
@@ -356,7 +358,7 @@ def generate_map(array_size, num_rooms,room_length, room_width):
     myMap.connect_rooms(myMap.MST())
     myMap.add_rooms()
     myMap.add_decor()
-    myMap.print_grid()
+    #myMap.print_grid()
     
     return myMap
 
