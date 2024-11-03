@@ -65,7 +65,7 @@ candy_knife_ui = pygame.image.load("assets/items/candy_knife.png")
 candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
 speed_ui = pygame.image.load("assets/items/speed.png")
-candy_knife_ui = pygame.transform.scale(speed_ui, (config.TILE_SIZE, config.TILE_SIZE))
+speed_ui = pygame.transform.scale(speed_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
 powerUps = {
     constants.KNIFE: candy_knife_ui,

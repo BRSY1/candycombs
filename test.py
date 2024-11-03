@@ -17,10 +17,11 @@ class Game:
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
-        self.player = player.Player("assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png")
-        self.agent1 = agent.Agent("assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png")
-        self.agent2 = agent.Agent("assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png")
-        self.agent3 = agent.Agent("assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png")
+        self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
+                                     ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png"]])
+        self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
+        self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
+        self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
 
         self.agent_group = []
         self.agent_group.append(self.agent1) # can make this a for loop
@@ -32,7 +33,7 @@ class Game:
         self.candyGenerationCounter = 0
         self.lastCandyGenerationTime = 0
         self.candies = []
-        self.powerUpIndex = -1
+        self.player.powerUpIndex = -1
         self.powerUpLast = 0
         self.powerUpCooldown = 10
         self.time_of_moves = []
@@ -98,15 +99,15 @@ class Game:
             self.player.moveDown()
         if keys[pygame.K_SPACE]:
             for agent in self.agent_group:
-                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley and self.powerUpIndex == constants.KNIFE:
+                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley and self.player.powerUpIndex == constants.KNIFE:
                     candy_stolen = agent.candy // 5
                     agent.candy -= candy_stolen
                     self.player.candy += candy_stolen
-                    self.powerUpIndex = -1
+                    self.player.powerUpIndex = -1
 
-            if self.powerUpIndex == constants.SPEED:
+            if self.player.powerUpIndex == constants.SPEED:
                 self.powerUpLast = pygame.time.get_ticks()
-                self.powerUpIndex = -1
+                self.player.powerUpIndex = -1
                 config.SPEED *= 5
                 print(config.SPEED)
         
@@ -244,8 +245,8 @@ class Game:
         self.screen.blit(scaled_powerup_ui, (config.SCREEN_WIDTH-(32 * 12), 0))
 
         # render current powerup
-        if self.powerUpIndex != -1:
-            powerUpImage = tile_map.powerUps[self.powerUpIndex]
+        if self.player.powerUpIndex != -1:
+            powerUpImage = tile_map.powerUps[self.player.powerUpIndex]
             scaledPowerupImage = pygame.transform.scale(powerUpImage, (powerup_ui.get_width() * 6, powerup_ui.get_height() * 6))
             self.screen.blit(scaledPowerupImage, (config.SCREEN_WIDTH-(19 * 12), 45))
 
@@ -338,9 +339,9 @@ class Game:
 
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
-            self.powerUpIndex = constants.KNIFE
+            self.player.powerUpIndex = constants.KNIFE
         elif tile_map.tile_map[r][c] == 's':
-            self.powerUpIndex = constants.SPEED
+            self.player.powerUpIndex = constants.SPEED
         tile_map.tile_map[r][c] = 'a'
         
 

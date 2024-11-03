@@ -4,15 +4,14 @@ import config
 import tile_map
 
 class Player(sprite.Sprite):
-    def __init__(self, image1, image2):
+    def __init__(self, images):
         super().__init__()
-        self.image = pygame.image.load(image1)
-        self.image = pygame.transform.scale(self.image, (128, 128))
-
-        self.walking_image = pygame.image.load(image2)
-        self.walking_image = pygame.transform.scale(self.walking_image, (128, 128))
-
-        self.standing_image = self.image
+        # images
+        # r: powerUp indices (e.g. default: 0, knife: 1)
+        # c: standing: 0, walking: 1, ...
+        self.images = [list(map(pygame.image.load, row)) for row in images]
+        self.images = [list(map(lambda img: pygame.transform.scale(img, (128, 128)), row)) for row in self.images]
+        self.image = self.images[0][0]
         
         self.rect = self.image.get_rect() 
         self.rect.topleft = (tile_map.CENTERX * config.TILE_SIZE, tile_map.CENTERY * config.TILE_SIZE)
@@ -29,13 +28,18 @@ class Player(sprite.Sprite):
         self.animate_frame = 0
         self.candy = 10
         self.speed = 10
+        self.powerUpIndex = -1
     
     def updateAnimation(self):
+        # use an if statement to handle the case where the default animation is used for a special powerup
+        animationIndex = self.powerUpIndex + 1 if self.powerUpIndex + 1 < len(self.images) else 0
+
         if self.is_moving:
             self.animate_frame += self.animate_speed
-            self.image = self.standing_image if int(self.animate_frame) % 2 else self.walking_image
+            self.image = self.images[animationIndex][0] if int(self.animate_frame) % 2 else self.images[animationIndex][1]
+
         else:
-            self.image = self.standing_image
+            self.image = self.images[animationIndex][0]
             self.animate_frame = 0
         
         if self.facing_right:
