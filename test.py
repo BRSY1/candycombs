@@ -9,6 +9,7 @@ import agent
 
 end_time = time.time() + 200
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -32,6 +33,7 @@ class Game:
         self.lastCandyGenerationTime = 0
         self.candies = []
         self.powerUpIndex = -1
+        self.time_of_moves = []
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -56,13 +58,10 @@ class Game:
 
         return (tile_map.tile_map[tiley][tilex] != '.')  # Check if the tile is walkable
 
-
     def powerUp(self):
         playerXPos, playerYPos = self.player.tilex, self.player.tiley
         if tile_map.tile_map[playerYPos][playerXPos] == 'k':
             self.pickUpPowerUp(playerYPos, playerXPos)
-
-
 
     def lavaBlock(self):
         value = 0
@@ -102,9 +101,32 @@ class Game:
                     self.powerUpIndex = -1
                     
 
+        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
+        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
+        time_of_moves = []
+        value = 0
+        lavaTile = [[0, 0] for _ in range(88)]
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                #print(tile_type)
+                if tile_type == 'l':
+                    lavaTile[value] = [row_index,col_index]
+                    value+=1
+
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
+        current_time_2 = time.time()
+        for i in range(0,len(lavaTile)):
+            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
+                if len(self.time_of_moves) < 2:
+                    self.player.candy -= 5
+                    self.time_of_moves.append(current_time_2)
+                else:
+                    print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
+                    if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
+                        self.player.candy -= 5
+                        self.time_of_moves.append(current_time_2)
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -136,7 +158,7 @@ class Game:
         self.screen.blit(visionSurface, (0, 0))
 
     def valuables_UI(self):
-        box_position = ((config.SCREEN_WIDTH/2)-300, 40)
+        box_position = ((config.SCREEN_WIDTH/2)-300, 25)
         box_width = (config.SCREEN_WIDTH/2) - 200 
         box_height = 50
         #powerUps_file_location = ("","","","","")
@@ -160,6 +182,10 @@ class Game:
         text = font_candy.render(f"{candy_collected}", True, (255,165,0))
         self.screen.blit(text, (140, 0))
 
+        time_ui = pygame.image.load("assets/ui/timebar.png")
+        scaled_time_ui = pygame.transform.scale(time_ui, (time_ui.get_width() * 20, time_ui.get_height() * 25))
+        self.screen.blit(scaled_time_ui, (config.SCREEN_WIDTH // 3 - 52,0))
+
         if (remaining_time >=0):
             bar_width = ((remaining_time/countdown_time) * box_width) -4
             pygame.draw.rect(self.screen, (0,0,0), (*box_position, box_width, box_height), 2)
@@ -168,9 +194,10 @@ class Game:
             remaining_time = int(remaining_time)
             minutes = (remaining_time % 3600) // 60
             seconds = remaining_time % 60
-            font_countdown = pygame.font.Font(None, 40)
+            
+            font_countdown = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
             text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
-            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-30, 50))
+            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-45, 75))
 
         powerup_ui = pygame.image.load("assets/ui/powerup.png")
         scaled_powerup_ui = pygame.transform.scale(powerup_ui, (powerup_ui.get_width() * 12, powerup_ui.get_height() * 12))
@@ -220,7 +247,6 @@ class Game:
         while self.is_running:
             self.clock.tick(config.FPS)
             self.drawTileMap()
-            self.lavaBlock()
             self.move()
             self.player.updateAnimation()
             self.moveAgents()
