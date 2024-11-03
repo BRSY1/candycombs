@@ -33,10 +33,11 @@ class Agent(player.Player):
                 tile = tmpTile[i][j]
 
                 if tile == '.': # wall 
-                    self.grid[0][i][j] = 1
+                    grid[0][i][j] = 1
                 elif tile == 'c': # candy
-                    self.grid[1][i][j] = 1  
+                    grid[1][i][j] = 1  
                     
+        print(agents)
         for agent in agents:
             if (
                 self.tiley-6 <= agent.tiley < self.tiley+5 and 
@@ -44,10 +45,10 @@ class Agent(player.Player):
             ):
                 if agent == self:
                     # self grid marked as 3 
-                    self.grid[1][6][6] = 3
+                    grid[1][6][6] = 3
                 else:
                     # agent grid marked as 2 
-                    self.grid[1][agent.tiley - self.tiley + 6][agent.tilex - self.tilex + 6] = 2
+                    grid[1][agent.tiley - self.tiley + 6][agent.tilex - self.tilex + 6] = 2
 
         if player:
             if (
@@ -55,7 +56,7 @@ class Agent(player.Player):
                 self.tilex-6 <= player.tilex < self.tilex+5
             ):  
                 # human player grid marked as 2
-                self.grid[1, player.tiley - self.tiley + 6, player.tilex - self.tiley + 6] = 2
+                grid[1, player.tiley - self.tiley + 6, player.tilex - self.tiley + 6] = 2
 
         return grid
 

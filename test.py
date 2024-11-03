@@ -1,3 +1,4 @@
+import os
 import pygame
 import tile_map
 import constants
@@ -44,6 +45,7 @@ class Game:
         self.message = [""]
 
         self.isTraining = isTraining
+        self.modelPath = "trained_models/agent_model.pt"
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -271,7 +273,7 @@ class Game:
         for agent in self.agent_group:
             prevx = agent.rect.x
             prevy = agent.rect.y
-            agent.update(self.player, self.agent_group)
+            agent.update(self.agent_group, self.player)
 
             agent.tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
             agent.tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
@@ -297,8 +299,9 @@ class Game:
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
     def run(self):  
-        for agent in self.agent_group:
-            agent.model.load_state_dict(torch.load("trained_models/agent_model.pt"))
+        if os.path.exists(self.modelPath):
+            for agent in self.agent_group:
+                agent.model.load_state_dict(torch.load(self.modelPath))
 
         while self.is_running:
             self.clock.tick(config.FPS)
