@@ -134,7 +134,7 @@ class Game:
         self.screen.blit(visionSurface, (0, 0))
 
     def valuables_UI(self):
-        box_position = ((config.SCREEN_WIDTH/2)-300, 40)
+        box_position = ((config.SCREEN_WIDTH/2)-300, 25)
         box_width = (config.SCREEN_WIDTH/2) - 200 
         box_height = 50
         #powerUps_file_location = ("","","","","")
@@ -158,6 +158,10 @@ class Game:
         text = font_candy.render(f"{candy_collected}", True, (255,165,0))
         self.screen.blit(text, (140, 0))
 
+        time_ui = pygame.image.load("assets/ui/timebar.png")
+        scaled_time_ui = pygame.transform.scale(time_ui, (time_ui.get_width() * 20, time_ui.get_height() * 25))
+        self.screen.blit(scaled_time_ui, (config.SCREEN_WIDTH // 3 - 52,0))
+
         if (remaining_time >=0):
             bar_width = ((remaining_time/countdown_time) * box_width) -4
             pygame.draw.rect(self.screen, (0,0,0), (*box_position, box_width, box_height), 2)
@@ -166,9 +170,10 @@ class Game:
             remaining_time = int(remaining_time)
             minutes = (remaining_time % 3600) // 60
             seconds = remaining_time % 60
-            font_countdown = pygame.font.Font(None, 40)
+            
+            font_countdown = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
             text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
-            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-30, 50))
+            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-45, 75))
 
         powerup_ui = pygame.image.load("assets/ui/powerup.png")
         scaled_powerup_ui = pygame.transform.scale(powerup_ui, (powerup_ui.get_width() * 12, powerup_ui.get_height() * 12))
