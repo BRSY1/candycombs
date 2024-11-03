@@ -53,8 +53,12 @@ class Game:
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
         self.casinoTile_activ = 0
-        self
         self.lavaTile = [[0, 0] for _ in range(88)]
+
+        self.casino_opt1 = 0
+        self.casino_reward = 0
+        self.bet_amount = 0
+        self.exit = 0
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -78,9 +82,22 @@ class Game:
                     self.hardTile_activ = 1
                 if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
                     self.casinoTile_activ = 1
+                if self.casinoTile_activ == 1:
+                    if event.key == pygame.K_1:
+                        self.casino_opt1 = 1
+                    if event.key == pygame.K_2:
+                        self.casino_opt1 = 2
+                    if event.key == pygame.K_3:
+                        self.casino_opt1 = 3
+                    if event.key == pygame.K_4:
+                        self.casino_opt1 = 4
+                    if event.key == pygame.K_x:
+                        self.exit = 1
+                    
             elif event.type == game.MESSAGE_POP:
                 if self.message:
                     self.message.pop(0)
+            
 
 
     def is_walkable(self, tilex, tiley):
@@ -223,12 +240,58 @@ class Game:
 
 
     def casinoTiles(self):
-        top = 450
         left = 180
+        top = 300
         if self.casinoTile_activ == 1:
+            temp = 0
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
             self.screen.blit(scaled_trivia_ui, (450, 180))
+            title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
+            text_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
+            title = title_font.render(f"Casino", True, (255,255,255))
+            self.screen.blit(title, (700, 190))
+            sub_script = text_font.render(f"Bet amount", True, (255,255,255))
+            self.screen.blit(sub_script, (left+310,top))
+            option1 = text_font.render(f"Option 1: {self.player.candy//8}", True, (255,255,255))
+            self.screen.blit(option1, (left+310,top+70))
+            option2 = text_font.render(f"Option 2: {self.player.candy//4}", True, (255,255,255))
+            self.screen.blit(option2, (left+310,top+140))
+            option3 = text_font.render(f"Option 3: {self.player.candy//2}", True, (255,255,255))
+            self.screen.blit(option3, (left+310,top+210))
+            option4 = text_font.render(f"Option 4: {self.player.candy}", True, (255,255,255))
+            self.screen.blit(option4, (left+310,top+280))
+            reward = title_font.render(f"Exit: x", True, (0,255,0))
+            self.screen.blit(reward, (left+700,top+280))
+            if (self.casino_opt1 == 1):
+                temp = (self.player.candy) // 8
+                self.bet_amount = temp
+                self.player.candy = (self.player.candy) - temp
+            if (self.casino_opt1 == 2):
+                temp = (self.player.candy) // 4
+                self.bet_amount = self.player.candy
+                self.player.candy = (self.player.candy) - temp
+            if (self.casino_opt1 == 3):
+                temp = (self.player.candy) // 2
+                self.bet_amount = self.player.candy
+                self.player.candy = (self.player.candy) - temp
+            if (self.casino_opt1 == 4):
+                self.bet_amount = self.player.candy
+                self.player.candy = 0
+            if (self.casino_opt1 == 1) or (self.casino_opt1 == 2) or (self.casino_opt1 == 3) or (self.casino_opt1 == 4):
+                random_number = random.randint(0,3)
+                temp2 = 0
+                if (random_number == 1) or (random_number == 0) or (random_number == 2):
+                    self.casino_reward = temp * random_number
+                if (random_number == 3):
+                    self.casino_reward = temp // 2
+                self.player.candy += temp2
+            reward = title_font.render(f"Reward: {self.casino_reward}", True, (255,0,0))
+            self.screen.blit(reward, (left+310,top+350))
+            if self.exit == 1:
+                self.casinoTile_activ = 0
+                self.exit = 0
+            self.casino_opt1 = 0
 
 
 
