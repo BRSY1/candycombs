@@ -159,20 +159,20 @@ class Game:
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 if len(self.time_of_moves) < 2:
                     self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                    self.vignetteColorR = 200
+                    self.vignetteColourR = 200
                     self.createVignetteEffect()
                     self.time_of_moves.append(current_time_2)
                 else:
                     if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
                         self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                        self.vignetteColorR = 200
+                        self.vignetteColourR = 200
                         self.createVignetteEffect()
                         self.time_of_moves.append(current_time_2)
                 # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
-                # self.vignetteColorR = 255
+                # self.vignettecolourR = 255
                 # self.createVignetteEffect()
             else:
-                self.vignetteColorR = 0
+                self.vignettecolourR = 0
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -204,11 +204,11 @@ class Game:
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
-        visionSurface.fill((self.vignetteColorR, self.vignetteColourG, self.vignetteColourB,240))
+        visionSurface.fill((self.vignettecolourR, self.vignetteColourG, self.vignetteColourB,240))
         center = (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2) 
         for radius in range(config.VISION_RADIUS, 0, -30):
             alpha = int(240 * (radius / config.VISION_RADIUS)) 
-            pygame.draw.circle(visionSurface, (self.vignetteColorR, self.vignetteColourG, self.vignetteColourB,0 + alpha), center, radius)
+            pygame.draw.circle(visionSurface, (self.vignettecolourR, self.vignetteColourG, self.vignetteColourB,0 + alpha), center, radius)
         self.screen.blit(visionSurface, (0, 0))
 
     def valuables_UI(self):
