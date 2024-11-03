@@ -129,10 +129,10 @@ class Game:
                         self.is_load_screen = False
                         global end_time
                         end_time = time.time() + 300
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.player_name = self.player_name[:-1]
-                    else:
-                        self.player_name += event.unicode
+                    # elif event.key == pygame.K_BACKSPACE:
+                    #     self.player_name = self.player_name[:-1]
+                    # else:
+                    #     self.player_name += event.unicode
             
             elif event.type == pygame.KEYUP:
                     if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
@@ -436,6 +436,7 @@ class Game:
         box_position = ((config.SCREEN_WIDTH/2)-300, 25)
         box_width = (config.SCREEN_WIDTH/2) - 200 
         box_height = 50
+        remaining_time = 300
         #powerUps_file_location = ("","","","","")
         countdown_time = 300
         current_time = time.time()
