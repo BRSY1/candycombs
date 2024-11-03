@@ -182,7 +182,7 @@ class Game:
                     if event.key == pygame.K_RETURN:
                         self.is_load_screen = False
                         global end_time
-                        end_time = time.time() + 90
+                        end_time = time.time() + 120
             
             elif event.type == pygame.KEYUP:
                 if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
