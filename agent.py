@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import model
+import deque
 
 class Agent(player.Player):
     def __init__(self, images):
@@ -36,8 +37,6 @@ class Agent(player.Player):
                     self.grid[0][i][j] = 1
                 elif tile == 'c': # candy
                     self.grid[1][i][j] = 1  
-            
-        
                     
         for agent in agents:
             if (
@@ -60,7 +59,44 @@ class Agent(player.Player):
                 self.grid[1, player.tiley - self.tiley + 6, player.tilex - self.tiley + 6] = 2
 
         return self.grid
+    
+    def getMatrix(self, player, agents):
+        self.grid = np.zeros((11, 11))
 
+        tmpTile = []
+        for row in tile_map.tile_map[self.tiley-6:self.tiley+5]:
+            tmpTile.append(row[self.tilex-6:self.tilex+5])
+
+        for i in range(11):
+            for j in range(11):
+                tile = tmpTile[i][j]
+                if tile == '.':  # wall
+                    self.grid[i][j] = 1
+                elif tile == 'c':  # candy
+                    self.grid[i][j] = 2
+
+        for agent in agents:
+            if (self.tiley-6 <= agent.tiley < self.tiley+5 and
+                self.tilex-6 <= agent.tilex < self.tilex+5):
+                if agent == self:
+                    # Self grid marked as 3 (for the agent itself)
+                    self.grid[6][6] = 3
+                else:
+                    # Agent grid marked as 4 (for other agents)
+                    agent_x = agent.tilex - self.tilex + 6
+                    agent_y = agent.tiley - self.tiley + 6
+                    self.grid[agent_y][agent_x] = 4
+
+        if player:
+            if (self.tiley-6 <= player.tiley < self.tiley+5 and
+                self.tilex-6 <= player.tilex < self.tilex+5):
+                player_x = player.tilex - self.tilex + 6
+                player_y = player.tiley - self.tiley + 6
+                # Human player grid marked as 4
+                self.grid[player_y][player_x] = 4
+
+        return self.grid
+    
     def update(self, agent_group, player=None):
         self.getGrid(None, agent_group)
         self.is_moving = True
