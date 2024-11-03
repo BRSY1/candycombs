@@ -8,7 +8,7 @@ class Player(sprite.Sprite):
         super().__init__()
         # images
         # r: powerUp indices (e.g. default: 0, knife: 1)
-        # c: standing: 0, walking: 1, ...
+        # c: standing: 0, walking: 1, stabbing: 2...
         self.images = [list(map(pygame.image.load, row)) for row in images]
         self.images = [list(map(lambda img: pygame.transform.scale(img, (128, 128)), row)) for row in self.images]
         self.image = self.images[0][0]
@@ -29,12 +29,21 @@ class Player(sprite.Sprite):
         self.candy = 10
         self.speed = 10
         self.powerUpIndex = -1
+        self.is_attacking = False
+        self.lastAttackTime = -1
     
     def updateAnimation(self):
         # use an if statement to handle the case where the default animation is used for a special powerup
         animationIndex = self.powerUpIndex + 1 if self.powerUpIndex + 1 < len(self.images) else 0
 
-        if self.is_moving:
+        if self.is_attacking:
+            self.animate_frame += self.animate_speed
+            self.image = self.images[animationIndex][0] if int(self.animate_frame) % 2 else self.images[animationIndex][2]
+
+            if pygame.time.get_ticks() - self.lastAttackTime > config.ATTACK_INTERVAL:
+                self.is_attacking = False
+
+        elif self.is_moving:
             self.animate_frame += self.animate_speed
             self.image = self.images[animationIndex][0] if int(self.animate_frame) % 2 else self.images[animationIndex][1]
 

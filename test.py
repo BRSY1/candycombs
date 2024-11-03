@@ -18,7 +18,7 @@ class Game:
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
-                                     ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png"]])
+                                     ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"]])
         self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
@@ -98,12 +98,17 @@ class Game:
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
         if keys[pygame.K_SPACE]:
-            for agent in self.agent_group:
-                if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley and self.player.powerUpIndex == constants.KNIFE:
-                    candy_stolen = agent.candy // 5
-                    agent.candy -= candy_stolen
-                    self.player.candy += candy_stolen
-                    self.player.powerUpIndex = -1
+            if self.player.powerUpIndex == constants.KNIFE:
+                self.player.is_attacking = True
+                self.player.lastAttackTime = pygame.time.get_ticks()
+
+                for agent in self.agent_group:
+                    if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
+                        candy_stolen = agent.candy // 5
+                        agent.candy -= candy_stolen
+                        self.player.candy += candy_stolen
+                        self.player.powerUpIndex = -1
+                        self.player.is_attacking = False
 
             if self.player.powerUpIndex == constants.SPEED:
                 self.powerUpLast = pygame.time.get_ticks()
