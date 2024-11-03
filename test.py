@@ -14,7 +14,7 @@ end_time = time.time() + 200
 class Game:
     MESSAGE_POP = pygame.USEREVENT + 1
 
-    def __init__(self):
+    def __init__(self, isTraining=False):
         pygame.init()
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
@@ -47,7 +47,17 @@ class Game:
         self.vignetteColourB = 0
         self.message = [""]
 
-        pygame.time.set_timer(self.MESSAGE_POP, 10000)
+        self.isTraining = isTraining
+
+        self.time_of_moves = 0
+        self.easyTile_activ = 0
+        self.mediumTileTil_activ = 0
+        self.hardTile_activ = 0
+
+        self.easyTile = [[0, 0],[0,0]]
+        self.mediumTile = [[0, 0],[0,0]]
+        self.hardTile = [[0, 0],[0,0]]
+        self.lavaTile = [[0, 0] for _ in range(88)]
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -63,6 +73,12 @@ class Game:
                 playerXPos, playerYPos = self.player.tilex, self.player.tiley
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
                     self.openChest(playerYPos, playerXPos)
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
+                    self.easyTile_activ = 1
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
+                    self.mediumTileTil_activ = 1
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
+                    self.hardTile_activ = 1
             elif event.type == game.MESSAGE_POP:
                 if self.message:
                     self.messagePop()
@@ -167,25 +183,27 @@ class Game:
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
+        '''
         current_time_2 = time.time()
         for i in range(0,len(lavaTile)):
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 if len(self.time_of_moves) < 2:
                     self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                    self.vignetteColourR = 200
+                    self.vignetteColorR = 200
                     self.createVignetteEffect()
                     self.time_of_moves.append(current_time_2)
                 else:
                     if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
                         self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                        self.vignetteColourR = 200
+                        self.vignetteColorR = 200
                         self.createVignetteEffect()
                         self.time_of_moves.append(current_time_2)
                 # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
-                # self.vignettecolourR = 255
+                # self.vignetteColorR = 255
                 # self.createVignetteEffect()
             else:
-                self.vignettecolourR = 0
+                self.vignetteColorR = 0
+        '''
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -208,6 +226,50 @@ class Game:
         self.screen.blit(self.player.image, (player_draw_x, player_draw_y))
 
 
+    def tileFinding(self):
+        valueLava = 0
+        valueEasy = 0
+        valueMedium = 0
+        valueHard =0 
+        for row_index, row in enumerate(tile_map.tile_map):
+            for col_index, tile_type in enumerate(row):
+                #print(tile_type)
+                if tile_type == 'l':
+                    self.lavaTile[valueLava] = [row_index,col_index]
+                    valueLava+=1
+                if tile_type == 'e':
+                    self.easyTile[valueEasy] = [row_index,col_index]
+                if tile_type == 'm':
+                    self.easyTile[valueMedium] = [row_index,col_index]
+                if tile_type == 'h':
+                    self.easyTile[valueHard] = [row_index,col_index]
+
+
+    def lavaTileActivation(self):
+        current_time_2 = time.time()
+        for i in range(0,len(self.lavaTile)):
+            if (self.player.tiley == self.lavaTile[i][0]) and (self.player.tilex == self.lavaTile[i][1]):
+                if self.time_of_moves == 0:
+                    self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                    self.vignetteColourR = 200
+                    self.createVignetteEffect()
+                    self.time_of_moves = current_time_2
+                else:
+                    if ((self.time_of_moves - current_time_2) < -1):
+                        self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                        self.vignetteColourR = 200
+                        self.createVignetteEffect()
+                        self.time_of_moves = current_time_2
+            else:
+                self.vignetteColourR = 0
+                # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
+                # self.vignetteColorR = 255
+                # self.createVignetteEffect()
+
+    def quizTiles(self):
+        if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
+            pygame.draw.rect(self.screen, (0,0,0), pygame.Rect(100, 100, 200, 100))
+
 
 
     def resetPowerUps(self):
@@ -222,11 +284,11 @@ class Game:
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
-        visionSurface.fill((self.vignettecolourR, self.vignetteColourG, self.vignetteColourB,240))
+        visionSurface.fill((self.vignetteColourR, self.vignetteColourG, self.vignetteColourB,240))
         center = (config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2) 
         for radius in range(config.VISION_RADIUS, 0, -30):
             alpha = int(240 * (radius / config.VISION_RADIUS)) 
-            pygame.draw.circle(visionSurface, (self.vignettecolourR, self.vignetteColourG, self.vignetteColourB,0 + alpha), center, radius)
+            pygame.draw.circle(visionSurface, (self.vignetteColourR, self.vignetteColourG, self.vignetteColourB,0 + alpha), center, radius)
         self.screen.blit(visionSurface, (0, 0))
 
     def valuables_UI(self):
@@ -322,6 +384,9 @@ class Game:
             self.clock.tick(config.FPS)
             self.drawTileMap()
             self.move()
+            self.tileFinding()
+            self.lavaTileActivation()
+            self.quizTiles()
             self.player.updateAnimation()
             self.moveAgents()
             self.handleEvent()
