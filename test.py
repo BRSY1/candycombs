@@ -52,10 +52,8 @@ class Game:
         self.easyTile_activ = 0
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
-
-        self.easyTile = [[0, 0],[0,0]]
-        self.mediumTile = [[0, 0],[0,0]]
-        self.hardTile = [[0, 0],[0,0]]
+        self.casinoTile_activ = 0
+        self
         self.lavaTile = [[0, 0] for _ in range(88)]
 
     def handleEvent(self):
@@ -78,6 +76,8 @@ class Game:
                     self.mediumTileTil_activ = 1
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
                     self.hardTile_activ = 1
+                if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
+                    self.casinoTile_activ = 1
             elif event.type == game.MESSAGE_POP:
                 if self.message:
                     self.messagePop()
@@ -151,53 +151,10 @@ class Game:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
-                
             
-            
-                
-        
-                    
-
-        value = 0
-        lavaTile = [[0, 0] for _ in range(88)]
-        for row_index, row in enumerate(tile_map.tile_map):
-            for col_index, tile_type in enumerate(row):
-                if tile_type == 'l':
-                    lavaTile[value] = [row_index,col_index]
-                    value+=1
-
-                value = 0
-        lavaTile = [[0, 0] for _ in range(88)]
-        for row_index, row in enumerate(tile_map.tile_map):
-            for col_index, tile_type in enumerate(row):
-                if tile_type == 'l':
-                    lavaTile[value] = [row_index,col_index]
-                    value+=1
-
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
-        '''
-        current_time_2 = time.time()
-        for i in range(0,len(lavaTile)):
-            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
-                if len(self.time_of_moves) < 2:
-                    self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                    self.vignetteColorR = 200
-                    self.createVignetteEffect()
-                    self.time_of_moves.append(current_time_2)
-                else:
-                    if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
-                        self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                        self.vignetteColorR = 200
-                        self.createVignetteEffect()
-                        self.time_of_moves.append(current_time_2)
-                # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
-                # self.vignetteColorR = 255
-                # self.createVignetteEffect()
-            else:
-                self.vignetteColorR = 0
-        '''
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -231,12 +188,6 @@ class Game:
                 if tile_type == 'l':
                     self.lavaTile[valueLava] = [row_index,col_index]
                     valueLava+=1
-                if tile_type == 'e':
-                    self.easyTile[valueEasy] = [row_index,col_index]
-                if tile_type == 'm':
-                    self.easyTile[valueMedium] = [row_index,col_index]
-                if tile_type == 'h':
-                    self.easyTile[valueHard] = [row_index,col_index]
 
 
     def lavaTileActivation(self):
@@ -266,6 +217,11 @@ class Game:
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
             self.screen.blit(scaled_trivia_ui, (450, 180))
 
+    def casinoTiles(self):
+        if self.casinoTile_activ == 1:
+            trivia_ui = pygame.image.load("assets/ui/trivia.png")
+            scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
+            self.screen.blit(scaled_trivia_ui, (450, 180))
 
 
     def resetPowerUps(self):
