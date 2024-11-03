@@ -73,6 +73,9 @@ class Game:
         self.easyTile_activ = 0
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
+        self.casinoTile_activ = 0
+        self.casino_opt1 = 0
+        self.casino_reward = 0
 
         self.easyTile = [[0, 0],[0,0]]
         self.mediumTile = [[0, 0],[0,0]]
@@ -162,6 +165,8 @@ class Game:
                         self.mediumTileTil_activ = 1
                     if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
                         self.hardTile_activ = 1
+                    if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
+                        self.casinoTile_activ = 1
                 elif event.type == game.MESSAGE_POP:
                     if self.message:
                         self.messagePop()
@@ -789,7 +794,7 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
+            tile_map.tile_map[r][c] = random.choice(['i','k','s','n']) 
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
@@ -897,6 +902,7 @@ class Game:
                 self.tileFinding()
                 self.lavaTileActivation()
                 self.quizTiles()
+                self.casinoTiles()
                 self.player.updateAnimation()
                 self.moveAgents()
                 if not self.player.night_vis:
