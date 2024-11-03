@@ -221,6 +221,7 @@ class Game:
             self.screen.blit(text, (500+32, 180+16))
 
 
+
     def casinoTiles(self):
         if self.casinoTile_activ == 1:
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
