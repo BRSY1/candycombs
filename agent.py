@@ -5,6 +5,7 @@ import config
 import tile_map
 import torch
 import torch.nn.functional as F
+import numpy as np
 import model
 
 class Agent(player.Player):
@@ -19,21 +20,44 @@ class Agent(player.Player):
             self.lr = 1e-3
             self.optimiser = torch.optim.Adam(self.model.parameters(), lr=self.lr)
 
-    def updateGrid(self):
-        self.grid = []
-        self.tmp = tile_map.tile_map[self.tiley-6:self.tiley+5]
-        for i in range(11):
-            self.grid.append(self.tmp[i][self.tilex-6:self.tilex+5])
+    def getGrid(self, player, agents):
+        # dim: (2, 11, 11)
+        grid = np.zeros((2, 11, 11))
+        tmpTile = []
+        
+        for row in tile_map.tile_map[self.tiley-6:self.tiley+5]:
+            tmpTile.append([row][self.tilex-6:self.tilex+5])
 
         for i in range(11):
             for j in range(11):
-                if self.grid[i][j] == '.':
-                    self.grid[i][j] = 0
-                elif self.grid[i][j] == 'c':
-                    self.grid[i][j] = 1
+                tile = tmpTile[i][j]
+
+                if tile == '.': # wall 
+                    self.grid[0, i, j] = 1
+                elif tile == 'c': # candy
+                    self.grid[1, i, j] = 1  
+                    
+        for agent in agents:
+            if (
+                self.tiley-6 <= agent.tiley < self.tiley+5 and 
+                self.tilex-6 <= agent.tilex < self.tilex+5
+            ):
+                if agent == self:
+                    # self grid marked as 3 
+                    self.grid[1, 6, 6] = 3
                 else:
-                    self.grid[i][j] = 2
-        
+                    # agent grid marked as 2 
+                    self.grid[1, agent.tiley - self.tiley + 6, agent.tilex - self.tilex + 6] = 2
+
+        if player:
+            if (
+                self.tiley-6 <= player.tiley < self.tiley+5 and 
+                self.tilex-6 <= player.tilex < self.tilex+5
+            ):  
+                # human player grid marked as 2
+                self.grid[1, player.tiley - self.tiley + 6, player.tilex - self.tiley + 6] = 2
+
+        return grid
 
     def update(self):
         self.updateGrid()

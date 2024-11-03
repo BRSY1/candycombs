@@ -298,7 +298,10 @@ class Game:
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
-    def run(self):
+    def run(self):  
+        for agent in self.agent_group:
+            agent.model.load_state_dict(torch.load("trained_models/agent_model.pt"))
+
         while self.is_running:
             self.clock.tick(config.FPS)
             self.drawTileMap()
@@ -369,6 +372,8 @@ class Game:
                 text = font_msg.render(message, True, (255,255,255))
                 self.screen.blit(text, (50, i-20))
                 i -= 50
+
+        
         
 
 
