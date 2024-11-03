@@ -46,6 +46,7 @@ class Game:
         self.vignetteColourG = 0
         self.vignetteColourB = 0
         self.message = []
+        self.exit = 0
 
         self.isTraining = isTraining
 
