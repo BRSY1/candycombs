@@ -406,7 +406,6 @@ class Game:
             alpha -= 30
         
 
-
 #def draw_bar(screen, coins_collected, max_coins):
 #    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
 #    fill_width = (coins_collected / max_coins) * (BAR_WIDTH - 4)  # -4 for padding
@@ -416,5 +415,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game(isTraining=True)
+    game = Game()
     game.run()
