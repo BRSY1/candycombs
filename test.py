@@ -16,8 +16,8 @@ def getLocation():
     locationx, locationy = None, None
     for i in range(100):
         for j in range(100):
-            if tile_map.tile_map[i][j] == 't':
-                if random.choice([range(0, 5) == 1]):
+            if tile_map.tile_map[j][i] == 't':
+                if random.randint(0, 3)  == 1:
                     locationy = j
                     locationx = i
                 
@@ -45,11 +45,35 @@ class Game:
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent4 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent5 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent6 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent7 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent8 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent9 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent10 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent11 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent12 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent13 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent14 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], None, None)
+        locationx, locationy = getLocation()
+        self.agent15 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]], None, None)
+        locationx, locationy = getLocation()
+        self.agent16 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], None, None)
 
-        self.agent_group = []
-        self.agent_group.append(self.agent1) # can make this a for loop
-        self.agent_group.append(self.agent2)
-        self.agent_group.append(self.agent3)
+
+        self.agent_group = [self.agent1, self.agent2, self.agent3, self.agent4, self.agent5, self.agent6, self.agent7, self.agent8, self.agent9, self.agent10]
         
         self.offsetx = 0
         self.offsety = 0
