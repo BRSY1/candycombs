@@ -718,7 +718,7 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
+            tile_map.tile_map[r][c] = random.choice(['n','i','k','s',]) 
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
