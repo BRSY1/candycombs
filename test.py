@@ -44,7 +44,7 @@ class Game:
         self.vignetteColourR = 0
         self.vignetteColourG = 0
         self.vignetteColourB = 0
-        self.message = [""]
+        self.message = []
 
         self.isTraining = isTraining
 
@@ -78,9 +78,9 @@ class Game:
                     self.mediumTileTil_activ = 1
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
                     self.hardTile_activ = 1
-            elif event.type == game.MESSAGE_POP:
+            elif event.type == Game.MESSAGE_POP:
                 if self.message:
-                    self.messagePop()
+                    self.message.pop(0)
 
 
     def is_walkable(self, tilex, tiley):
@@ -448,30 +448,7 @@ class Game:
 
     def messageMaintainer(self):
         if len(self.message) == 4:
-            self.messagePop()
-    
-    def messagePop(self):
-        if len(self.message) == 4:
-            temp3 = self.message[3]
-            temp2 = self.message[2]
-            temp1 = self.message[1]
-            self.message.pop()
-            self.message[0] = temp1
-            self.message[1] = temp2
-            self.message[2] = temp3
-        elif len(self.message) == 3:
-            temp2 = self.message[2]
-            temp1 = self.message[1]
-            self.message.pop()
-            self.message[0] = temp1
-            self.message[1] = temp2
-        elif len(self.message) == 2:
-            temp1 = self.message[1]
-            self.message.pop()
-            self.message[0] = temp1
-        elif len(self.message) == 1:
-            self.message = [""]
-
+            self.message.pop(0)
 
     def messageBox(self):
         i = config.SCREEN_HEIGHT
