@@ -646,9 +646,6 @@ class Game:
             self.screen.blit(option4, (left+310,top+280))
             reward = title_font.render(f"Exit: x", True, (0,255,0))
             self.screen.blit(reward, (left+700,top+360))
-            wheel_ui = pygame.image.load(wheel[self.animation_type])
-            scaled_wheel_ui = pygame.transform.scale(wheel_ui, (trivia_ui.get_width() * 10, trivia_ui.get_height()*10))
-            self.screen.blit(scaled_wheel_ui, (800, top+50))
             random_number = 0
             if self.animation != 1:
                 if (self.casino_op1 == 1):
@@ -659,7 +656,7 @@ class Game:
                     self.animation_type = 0
                 if (self.casino_op1 == 2):
                     temp = (self.player.candy) // 4
-                    self.bet_amount = self.player.candy
+                    self.bet_amount = temp
                     self.player.candy = (self.player.candy) - temp
                     self.animation = 1
                     self.animation_type = 1
@@ -688,9 +685,12 @@ class Game:
                     random_2 = random.randint(0,3)
                     self.animation_type = random_2
             if self.animation == 1 and self.animation_time == 7:
-                self.animation_type = 0
+                self.animation_type = random_number
                 self.animation = 0
                 self.animation_time = 0
+            wheel_ui = pygame.image.load(wheel[self.animation_type])
+            scaled_wheel_ui = pygame.transform.scale(wheel_ui, (trivia_ui.get_width() * 10, trivia_ui.get_height()*10))
+            self.screen.blit(scaled_wheel_ui, (800, top+50))
             reward = title_font.render(f"Reward: {self.casino_reward}", True, (255,0,0))
             self.screen.blit(reward, (left+310,top+360))
             if self.exit == 1:
