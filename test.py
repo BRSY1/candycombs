@@ -243,27 +243,6 @@ class Game:
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
-        '''
-        current_time_2 = time.time()
-        for i in range(0,len(lavaTile)):
-            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
-                if len(self.time_of_moves) < 2:
-                    self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                    self.vignetteColorR = 200
-                    self.createVignetteEffect()
-                    self.time_of_moves.append(current_time_2)
-                else:
-                    if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
-                        self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
-                        self.vignetteColorR = 200
-                        self.createVignetteEffect()
-                        self.time_of_moves.append(current_time_2)
-                # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
-                # self.vignetteColorR = 255
-                # self.createVignetteEffect()
-            else:
-                self.vignetteColorR = 0
-        '''
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
