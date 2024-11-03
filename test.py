@@ -65,7 +65,10 @@ class Game:
 
     def powerUp(self):
         playerXPos, playerYPos = self.player.tilex, self.player.tiley
-        if tile_map.tile_map[playerYPos][playerXPos] == 'k' or tile_map.tile_map[playerYPos][playerXPos] == 's':
+        if  (tile_map.tile_map[playerYPos][playerXPos] == 'k' or 
+            tile_map.tile_map[playerYPos][playerXPos] == 's' or 
+            tile_map.tile_map[playerYPos][playerXPos] == 'i' or 
+            tile_map.tile_map[playerYPos][playerXPos] == 'n'):
             self.pickUpPowerUp(playerYPos, playerXPos)
 
     def lavaBlock(self):
@@ -73,11 +76,10 @@ class Game:
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                #print(tile_type)
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
-        print(lavaTile[0])
+       
         for i in range(0,len(lavaTile)):
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 self.player.candy -= 5
@@ -115,30 +117,24 @@ class Game:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
                 config.SPEED *= 3
-                print(config.SPEED)
+
+            
+                
         
                     
 
-        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
-        time_of_moves = []
         value = 0
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                #print(tile_type)
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
 
-        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
-        time_of_moves = []
-        value = 0
+                value = 0
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                #print(tile_type)
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
@@ -155,7 +151,6 @@ class Game:
                     self.createVignetteEffect()
                     self.time_of_moves.append(current_time_2)
                 else:
-                    # print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
                     if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
                         self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
                         self.vignetteColorR = 200
@@ -342,9 +337,8 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['k','s'])
-        print (tile_map.tile_map[r][c])
-
+            tile_map.tile_map[r][c] = random.choice(['i','k','s','n']) 
+        
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
@@ -352,6 +346,13 @@ class Game:
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
             self.message.append("You just got a speed potion!") 
+        elif tile_map.tile_map[r][c] == 'i':
+            self.player.powerUpIndex = constants.INVISIBILITY
+            self.message.append("You just got an invisibility potion!") 
+        elif tile_map.tile_map[r][c] == 'n':
+            self.player.powerUpIndex = constants.NIGHT_VISION
+            self.message.append("You just got a night vision potion!") 
+
         tile_map.tile_map[r][c] = 'a'
     
     def messageBox(self):
