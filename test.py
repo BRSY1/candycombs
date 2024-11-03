@@ -264,6 +264,10 @@ class Game:
             four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
             self.screen.blit(four, (860, 600))
 
+            keys = pygame.key.get_pressed()
+
+            
+
 
 
     def casinoTiles(self):
@@ -430,8 +434,6 @@ class Game:
                 candy_x = pos[1] * config.TILE_SIZE - offset_x
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
-
-    
 
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
