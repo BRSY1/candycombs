@@ -194,8 +194,8 @@ class Game:
             seconds = remaining_time % 60
             
             font_countdown = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
-            text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (255,255,255))
-            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-45, 75))
+            text = font_countdown.render(f"{minutes:02}:{seconds:02}", True, (139,0,139))
+            self.screen.blit(text, ((config.SCREEN_WIDTH/2)-46, 75))
 
         powerup_ui = pygame.image.load("assets/ui/powerup.png")
         scaled_powerup_ui = pygame.transform.scale(powerup_ui, (powerup_ui.get_width() * 12, powerup_ui.get_height() * 12))
