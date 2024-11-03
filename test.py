@@ -10,14 +10,13 @@ import torch
 
 end_time = time.time() + 200
 
-
 class Game:
     MESSAGE_POP = pygame.USEREVENT + 1
 
     def __init__(self, isTraining=False):
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load("")
+        pygame.mixer.music.load("assets/bgm.mp3")
         pygame.mixer.music.play(-1)
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
@@ -457,27 +456,7 @@ class Game:
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
-    def run(self):
-        while self.is_running:
-            self.clock.tick(config.FPS)
-            self.drawTileMap()
-            self.move()
-            self.tileFinding()
-            self.lavaTileActivation()
-            self.player.updateAnimation()
-            self.moveAgents()
-            self.handleEvent()
-            if not self.player.night_vis:
-                self.createVignetteEffect()
-            self.quizTiles()
-            self.casinoTiles()
-            self.valuables_UI()
-            self.powerUp()
-            self.resetPowerUps()
-            self.messageMaintainer()
-            self.messageBox()
-            pygame.display.flip()
-
+    
     def drawTileMap(self):
         offset_x, offset_y = self.getOffset()
         
@@ -545,7 +524,78 @@ class Game:
             self.screen.blit(text, (50, i-100))
             i -= 50
             alpha -= 30
-        
+
+
+
+    def show_end_screen(self):
+        # Fill the screen with a background color
+        self.screen.fill((0, 0, 0))  # Black background
+
+        # Load or set font for the end screen
+        end_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
+        message_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
+
+        # Display the game over message
+        end_text = end_font.render("Game Over!", True, (255, 0, 0))  # Red color
+        end_rect = end_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 - 100))
+        self.screen.blit(end_text, end_rect)
+
+        # Display the final score or candy collected
+        final_score_text = message_font.render(f"Total Candy Collected: {self.player.candy}", True, (255, 255, 255))
+        score_rect = final_score_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2))
+        self.screen.blit(final_score_text, score_rect)
+
+        # Display restart and quit instructions
+        restart_text = message_font.render("Press Q to Quit", True, (200, 200, 200))
+        restart_rect = restart_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 + 100))
+        self.screen.blit(restart_text, restart_rect)
+
+        pygame.display.flip()  # Update the screen
+
+        # Wait for player input to restart or quit
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.is_running = False
+                    waiting = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:  # Quit the game
+                        self.is_running = False
+                        waiting = False
+    def reset_game(self):
+        # Reset player position, score, etc.
+        self.player.rect.x = config.SCREEN_WIDTH // 2
+        self.player.rect.y = config.SCREEN_HEIGHT // 2
+        self.player.candy = 0
+        self.candies.clear()
+        self.lastCandyGenerationTime = 0
+        self.is_running = True
+
+    def run(self):
+        while self.is_running:
+            self.clock.tick(config.FPS)
+            self.drawTileMap()
+            self.move()
+            self.tileFinding()
+            self.lavaTileActivation()
+            self.player.updateAnimation()
+            self.moveAgents()
+            self.handleEvent()
+            if not self.player.night_vis:
+                self.createVignetteEffect()
+            self.quizTiles()
+            self.casinoTiles()
+            self.valuables_UI()
+            self.powerUp()
+            self.resetPowerUps()
+            self.messageMaintainer()
+            self.messageBox()
+
+            if time.time() > end_time:
+                self.show_end_screen()  # Display end screen
+                break  # Exit the game loop
+            pygame.display.flip()
 
 #def draw_bar(screen, coins_collected, max_coins):
 #    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
