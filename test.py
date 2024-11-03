@@ -10,22 +10,19 @@ import torch
 
 end_time = time.time() + 200
 
+
 class Game:
     MESSAGE_POP = pygame.USEREVENT + 1
 
     def __init__(self, isTraining=False):
         pygame.init()
-        pygame.mixer.init()
-        pygame.mixer.music.load("assets/bgm.mp3")
-        pygame.mixer.music.play(-1)
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
                                      ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"],
-                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"],
-                                     ["assets/mainCharacterFrames/mainCharcterInvisbleStanding.png","assets/mainCharacterFrames/mainCharacterInvisibleWalking.png"]])
+                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"]])
         self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
@@ -47,7 +44,7 @@ class Game:
         self.vignetteColourR = 0
         self.vignetteColourG = 0
         self.vignetteColourB = 0
-        self.message = []
+        self.message = [""]
 
         self.isTraining = isTraining
 
@@ -55,7 +52,10 @@ class Game:
         self.easyTile_activ = 0
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
-        self.casinoTile_activ = 0
+
+        self.easyTile = [[0, 0],[0,0]]
+        self.mediumTile = [[0, 0],[0,0]]
+        self.hardTile = [[0, 0],[0,0]]
         self.lavaTile = [[0, 0] for _ in range(88)]
 
         self.is_load_screen = True
@@ -111,11 +111,6 @@ class Game:
 #Open Chest = O
 #Use power up = Space (_)
 
-        self.casino_opt1 = 0
-        self.casino_reward = 0
-        self.bet_amount = 0
-        self.exit = 0
-
     def handleEvent(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -134,7 +129,8 @@ class Game:
                     else:
                         self.player_name += event.unicode
             
-            elif event.type == pygame.KEYUP:
+            else:
+                if event.type == pygame.KEYUP:
                     if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
                         self.player.stop()
 
@@ -147,24 +143,9 @@ class Game:
                         self.mediumTileTil_activ = 1
                     if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
                         self.hardTile_activ = 1
-                    if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
-                        self.casinoTile_activ = 1
-                    if self.casinoTile_activ == 1:
-                        if event.key == pygame.K_1:
-                            self.casino_opt1 = 1
-                        if event.key == pygame.K_2:
-                            self.casino_opt1 = 2
-                        if event.key == pygame.K_3:
-                            self.casino_opt1 = 3
-                        if event.key == pygame.K_4:
-                            self.casino_opt1 = 4
-                        if event.key == pygame.K_x:
-                            self.exit = 1
-                    
-            elif event.type == game.MESSAGE_POP:
-                if self.message:
-                    self.message.pop(0)
-            
+                elif event.type == game.MESSAGE_POP:
+                    if self.message:
+                        self.messagePop()
 
 
     def is_walkable(self, tilex, tiley):
@@ -235,12 +216,7 @@ class Game:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
-            
-            if self.player.powerUpIndex == constants.INVISIBILITY:
-                self.powerUpLast = pygame.time.get_ticks()
-                self.player.powerUpIndex = -1
-                self.player.is_invisible = True
-            
+                
             
             
                 
@@ -266,6 +242,27 @@ class Game:
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
+        '''
+        current_time_2 = time.time()
+        for i in range(0,len(lavaTile)):
+            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
+                if len(self.time_of_moves) < 2:
+                    self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                    self.vignetteColorR = 200
+                    self.createVignetteEffect()
+                    self.time_of_moves.append(current_time_2)
+                else:
+                    if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
+                        self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                        self.vignetteColorR = 200
+                        self.createVignetteEffect()
+                        self.time_of_moves.append(current_time_2)
+                # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
+                # self.vignetteColorR = 255
+                # self.createVignetteEffect()
+            else:
+                self.vignetteColorR = 0
+        '''
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -299,6 +296,12 @@ class Game:
                 if tile_type == 'l':
                     self.lavaTile[valueLava] = [row_index,col_index]
                     valueLava+=1
+                if tile_type == 'e':
+                    self.easyTile[valueEasy] = [row_index,col_index]
+                if tile_type == 'm':
+                    self.easyTile[valueMedium] = [row_index,col_index]
+                if tile_type == 'h':
+                    self.easyTile[valueHard] = [row_index,col_index]
 
 
     def lavaTileActivation(self):
@@ -323,94 +326,8 @@ class Game:
                 # self.createVignetteEffect()
 
     def quizTiles(self):
-        easy = constants.easy_questions
-        medium = constants.medium_questions
-        hard = constants.hard_questions
-
-
         if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
-            trivia_ui = pygame.image.load("assets/ui/trivia.png")
-            scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
-            self.screen.blit(scaled_trivia_ui, (450, 180))
-            trivia_text = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
-            text = trivia_text.render(f"Terrifying Trivia", True, (255,255,255))
-            self.screen.blit(text, (500+32, 180+16))
-
-            one = pygame.image.load("assets/ui/1.png")
-            one = pygame.transform.scale(one, (one.get_width() * 8, one.get_height()*8))
-            self.screen.blit(one, (480, 500))
-
-            two = pygame.image.load("assets/ui/2.png")
-            two = pygame.transform.scale(two, (two.get_width() * 8, two.get_height()*8))
-            self.screen.blit(two, (860, 500))
-
-            three = pygame.image.load("assets/ui/3.png")
-            three = pygame.transform.scale(three, (three.get_width() * 8, three.get_height()*8))
-            self.screen.blit(three, (480, 600))
-
-            four = pygame.image.load("assets/ui/4.png")
-            four = pygame.transform.scale(four, (four.get_width() * 8, four.get_height()*8))
-            self.screen.blit(four, (860, 600))
-
-            keys = pygame.key.get_pressed()
-
-            
-
-
-
-    def casinoTiles(self):
-        left = 180
-        top = 300
-        if self.casinoTile_activ == 1:
-            temp = 0
-            trivia_ui = pygame.image.load("assets/ui/trivia.png")
-            scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
-            self.screen.blit(scaled_trivia_ui, (450, 180))
-            title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 70)
-            text_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
-            title = title_font.render(f"Casino", True, (255,255,255))
-            self.screen.blit(title, (700, 190))
-            sub_script = text_font.render(f"Bet amount", True, (255,255,255))
-            self.screen.blit(sub_script, (left+310,top))
-            option1 = text_font.render(f"Option 1: {self.player.candy//8}", True, (255,255,255))
-            self.screen.blit(option1, (left+310,top+70))
-            option2 = text_font.render(f"Option 2: {self.player.candy//4}", True, (255,255,255))
-            self.screen.blit(option2, (left+310,top+140))
-            option3 = text_font.render(f"Option 3: {self.player.candy//2}", True, (255,255,255))
-            self.screen.blit(option3, (left+310,top+210))
-            option4 = text_font.render(f"Option 4: {self.player.candy}", True, (255,255,255))
-            self.screen.blit(option4, (left+310,top+280))
-            reward = title_font.render(f"Exit: x", True, (0,255,0))
-            self.screen.blit(reward, (left+700,top+280))
-            if (self.casino_opt1 == 1):
-                temp = (self.player.candy) // 8
-                self.bet_amount = temp
-                self.player.candy = (self.player.candy) - temp
-            if (self.casino_opt1 == 2):
-                temp = (self.player.candy) // 4
-                self.bet_amount = self.player.candy
-                self.player.candy = (self.player.candy) - temp
-            if (self.casino_opt1 == 3):
-                temp = (self.player.candy) // 2
-                self.bet_amount = self.player.candy
-                self.player.candy = (self.player.candy) - temp
-            if (self.casino_opt1 == 4):
-                self.bet_amount = self.player.candy
-                self.player.candy = 0
-            if (self.casino_opt1 == 1) or (self.casino_opt1 == 2) or (self.casino_opt1 == 3) or (self.casino_opt1 == 4):
-                random_number = random.randint(0,3)
-                temp2 = 0
-                if (random_number == 1) or (random_number == 0) or (random_number == 2):
-                    self.casino_reward = temp * random_number
-                if (random_number == 3):
-                    self.casino_reward = temp // 2
-                self.player.candy += temp2
-            reward = title_font.render(f"Reward: {self.casino_reward}", True, (255,0,0))
-            self.screen.blit(reward, (left+310,top+350))
-            if self.exit == 1:
-                self.casinoTile_activ = 0
-                self.exit = 0
-            self.casino_opt1 = 0
+            pygame.draw.rect(self.screen, (0,0,0), pygame.Rect(100, 100, 200, 100))
 
 
 
@@ -418,10 +335,9 @@ class Game:
         now = pygame.time.get_ticks()
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
-            self.player.night_vis = False
-            self.player.is_invisible = False
+            self.night_vis = False
             
-            
+        
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -513,7 +429,7 @@ class Game:
                 agent.rect.x = prevx
                 agent.rect.y = prevy
             
-            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1 and not self.player.is_invisible:
+            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
@@ -545,7 +461,6 @@ class Game:
                 self.messageBox()
                 pygame.display.flip()
 
-    
     def drawTileMap(self):
         offset_x, offset_y = self.getOffset()
         
@@ -574,6 +489,8 @@ class Game:
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
 
+    
+
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
@@ -582,15 +499,14 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['i','n','k','s']) 
+            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife!") 
+            self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 
@@ -601,7 +517,30 @@ class Game:
 
     def messageMaintainer(self):
         if len(self.message) == 4:
-            self.message.pop(0)
+            self.messagePop()
+    
+    def messagePop(self):
+        if len(self.message) == 4:
+            temp3 = self.message[3]
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+            self.message[2] = temp3
+        elif len(self.message) == 3:
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+        elif len(self.message) == 2:
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+        elif len(self.message) == 1:
+            self.message = [""]
+
 
     def messageBox(self):
         i = config.SCREEN_HEIGHT
@@ -613,78 +552,7 @@ class Game:
             self.screen.blit(text, (50, i-100))
             i -= 50
             alpha -= 30
-
-
-
-    def show_end_screen(self):
-        # Fill the screen with a background color
-        self.screen.fill((0, 0, 0))  # Black background
-
-        # Load or set font for the end screen
-        end_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
-        message_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 30)
-
-        # Display the game over message
-        end_text = end_font.render("Game Over!", True, (255, 0, 0))  # Red color
-        end_rect = end_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 - 100))
-        self.screen.blit(end_text, end_rect)
-
-        # Display the final score or candy collected
-        final_score_text = message_font.render(f"Total Candy Collected: {self.player.candy}", True, (255, 255, 255))
-        score_rect = final_score_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2))
-        self.screen.blit(final_score_text, score_rect)
-
-        # Display restart and quit instructions
-        restart_text = message_font.render("Press Q to Quit", True, (200, 200, 200))
-        restart_rect = restart_text.get_rect(center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 + 100))
-        self.screen.blit(restart_text, restart_rect)
-
-        pygame.display.flip()  # Update the screen
-
-        # Wait for player input to restart or quit
-        waiting = True
-        while waiting:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.is_running = False
-                    waiting = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:  # Quit the game
-                        self.is_running = False
-                        waiting = False
-    def reset_game(self):
-        # Reset player position, score, etc.
-        self.player.rect.x = config.SCREEN_WIDTH // 2
-        self.player.rect.y = config.SCREEN_HEIGHT // 2
-        self.player.candy = 0
-        self.candies.clear()
-        self.lastCandyGenerationTime = 0
-        self.is_running = True
-
-    def run(self):
-        while self.is_running:
-            self.clock.tick(config.FPS)
-            self.drawTileMap()
-            self.move()
-            self.tileFinding()
-            self.lavaTileActivation()
-            self.player.updateAnimation()
-            self.moveAgents()
-            self.handleEvent()
-            if not self.player.night_vis:
-                self.createVignetteEffect()
-            self.quizTiles()
-            self.casinoTiles()
-            self.valuables_UI()
-            self.powerUp()
-            self.resetPowerUps()
-            self.messageMaintainer()
-            self.messageBox()
-
-            if time.time() > end_time:
-                self.show_end_screen()  # Display end screen
-                break  # Exit the game loop
-            pygame.display.flip()
+        
 
 #def draw_bar(screen, coins_collected, max_coins):
 #    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
