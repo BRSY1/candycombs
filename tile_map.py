@@ -33,6 +33,10 @@ candy = pygame.transform.scale(candy, (config.TILE_SIZE, config.TILE_SIZE))
 candy_knife = pygame.image.load("assets/tiles/candy_knife_floor.png")
 candy_knife = pygame.transform.scale(candy_knife, (config.TILE_SIZE, config.TILE_SIZE))
 
+
+speed = pygame.image.load("assets/items/speed.png")
+speed = pygame.transform.scale(speed, (config.TILE_SIZE, config.TILE_SIZE))
+
 lava = pygame.image.load("assets/tiles/lava.png")
 lava = pygame.transform.scale(lava, (config.TILE_SIZE, config.TILE_SIZE))
 
@@ -60,8 +64,12 @@ heart = pygame.transform.scale(heart, (config.TILE_SIZE, config.TILE_SIZE))
 candy_knife_ui = pygame.image.load("assets/items/candy_knife.png")
 candy_knife_ui = pygame.transform.scale(candy_knife_ui, (config.TILE_SIZE, config.TILE_SIZE))
 
+speed_ui = pygame.image.load("assets/items/speed.png")
+candy_knife_ui = pygame.transform.scale(speed_ui, (config.TILE_SIZE, config.TILE_SIZE))
+
 powerUps = {
-    constants.KNIFE: candy_knife_ui
+    constants.KNIFE: candy_knife_ui,
+    constants.SPEED: speed_ui
 }
 
 tiles = {
@@ -77,8 +85,10 @@ tiles = {
     '.': dark_wall,
     't': chest_floor,
     'k': candy_knife,
-    '1': diamond, #top left
-    '2': spade, #top right
-    '3': club, #bottom left
-    '4': heart #bottom right
+    's' : speed,
+
+    '1': light_wall, #top left
+    '2': light_wall, #top right
+    '3': light_wall, #bottom left
+    '4': light_wall #bottom right
 }
