@@ -54,13 +54,13 @@ class Game:
         locationx, locationy = getLocation()
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
-        self.agent4 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        self.agent4 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
-        self.agent5 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        self.agent5 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
-        self.agent6 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        self.agent6 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
-        self.agent7 = agent.Agent([["assets/skeleton/skeletonStanding.png", "/home/archibald/BRSY1/candycombs/assets/skeleton/skeletonWalking.png"]], locationx, locationy)
+        self.agent7 = agent.Agent([["assets/skeleton/skeletonStanding.png", "assets/skeleton/skeletonWalking.png"]], locationx, locationy)
         locationx, locationy = getLocation()
         self.agent8 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
         locationx, locationy = getLocation()
@@ -184,31 +184,33 @@ class Game:
                         end_time = time.time() + 90
             
             elif event.type == pygame.KEYUP:
-                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
                         self.player.stop()
 
-                    playerXPos, playerYPos = self.player.tilex, self.player.tiley
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
-                        self.openChest(playerYPos, playerXPos)
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
-                        self.easyTile_activ = 1
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
-                        self.mediumTileTil_activ = 1
-                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
-                        self.hardTile_activ = 1
-                    if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
-                        self.casinoTile_activ = 1
-                    if self.casinoTile_activ == 1:
-                        if event.key == pygame.K_1:
-                            self.casino_op1 = 1
-                        if event.key == pygame.K_2:
-                            self.casino_op1 = 2
-                        if event.key == pygame.K_3:
-                            self.casino_op1 = 3
-                        if event.key == pygame.K_4:
-                            self.casino_op1 = 4
-                        if event.key == pygame.K_x:
-                            self.exit = 1
+                playerXPos, playerYPos = self.player.tilex, self.player.tiley
+            
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                    self.openChest(playerYPos, playerXPos)
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
+                    self.easyTile_activ = 1
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
+                    self.mediumTileTil_activ = 1
+                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
+                    self.hardTile_activ = 1
+                if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
+                    self.casinoTile_activ = 1
+                if self.casinoTile_activ == 1:
+                    if event.key == pygame.K_1:
+                        self.casino_op1 = 1
+                    if event.key == pygame.K_2:
+                        self.casino_op1 = 2
+                    if event.key == pygame.K_3:
+                        self.casino_op1 = 3
+                    if event.key == pygame.K_4:
+                        self.casino_op1 = 4
+                    if event.key == pygame.K_x:
+                        self.exit = 1
+                    
             elif event.type == game.MESSAGE_POP:
                     if self.message:
                         self.messagePop()
@@ -609,6 +611,7 @@ class Game:
             self.easyTile_activ = 0
             self.hardTile_activ = 0
             self.mediumTileTil_activ = 0
+            self.casinoTile_activ = 0
             self.randomQuestion = random.randint(0,4)
             self.exit = 0
 
@@ -694,8 +697,6 @@ class Game:
             if self.exit == 1:
                 self.casinoTile_activ = 0
                 self.exit = 0
-
-
 
     def resetPowerUps(self):
         now = pygame.time.get_ticks()
@@ -847,7 +848,7 @@ class Game:
             self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got an speed potion")
+            self.message.append("You just got a speed potion")
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion") 
