@@ -12,7 +12,9 @@ end_time = time.time() + 200
 
 
 class Game:
-    def __init__(self, isTraining=False):
+    MESSAGE_POP = pygame.USEREVENT + 1
+
+    def __init__(self):
         pygame.init()
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
@@ -74,6 +76,9 @@ class Game:
                     self.mediumTileTil_activ = 1
                 if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
                     self.hardTile_activ = 1
+            elif event.type == game.MESSAGE_POP:
+                if self.message:
+                    self.messagePop()
 
 
     def is_walkable(self, tilex, tiley):
@@ -130,6 +135,7 @@ class Game:
                         candy_stolen = agent.candy // 5
                         agent.reward -= candy_stolen
                         agent.candy -= candy_stolen
+                        self.message.append(f"You just stole {candy_stolen} candy")
                         self.player.candy += candy_stolen
                         self.player.powerUpIndex = -1
                         self.player.is_attacking = False
@@ -350,6 +356,7 @@ class Game:
             self.valuables_UI()
             self.powerUp()
             self.resetPowerUps()
+            self.messageMaintainer()
             self.messageBox()
             pygame.display.flip()
 
@@ -394,29 +401,55 @@ class Game:
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife!") 
+            self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 
         elif tile_map.tile_map[r][c] == 'n':
             self.player.powerUpIndex = constants.NIGHT_VISION
-            self.message.append("You just got a night vision potion!") 
-
+            self.message.append("You just got a night vision potion!")
         tile_map.tile_map[r][c] = 'a'
+
+    def messageMaintainer(self):
+        if len(self.message) == 4:
+            self.messagePop()
     
+    def messagePop(self):
+        if len(self.message) == 4:
+            temp3 = self.message[3]
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+            self.message[2] = temp3
+        elif len(self.message) == 3:
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+        elif len(self.message) == 2:
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+        elif len(self.message) == 1:
+            self.message = [""]
+
+
     def messageBox(self):
         i = config.SCREEN_HEIGHT
+        alpha = 180
         for message in self.message:
-            if i > config.SCREEN_HEIGHT - 200:
-                font_msg = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 50)
-                text = font_msg.render(message, True, (255,255,255))
-                self.screen.blit(text, (50, i-20))
-                i -= 50
+            font_msg = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 50)
+            text = font_msg.render(message, True, (255,255,255))
+            text.set_alpha(255-alpha)
+            self.screen.blit(text, (50, i-100))
+            i -= 50
+            alpha -= 30
         
-
 
 #def draw_bar(screen, coins_collected, max_coins):
 #    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
@@ -427,5 +460,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game(isTraining=True)
+    game = Game()
     game.run()
