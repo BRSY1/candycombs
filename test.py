@@ -47,6 +47,7 @@ class Game:
         self.vignetteColourB = 0
         self.message = []
         self.exit = 0
+        self.randomQuestion = random.randint(0,4)
 
         self.isTraining = isTraining
 
@@ -61,7 +62,6 @@ class Game:
         self.lavaTile = [[0, 0] for _ in range(88)]
 
         self.is_load_screen = True
-        #self.player_name = ""
         self.font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 74)
         self.title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 100)
 
@@ -126,10 +126,6 @@ class Game:
                         self.is_load_screen = False
                         global end_time
                         end_time = time.time() + 300
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.player_name = self.player_name[:-1]
-                    else:
-                        self.player_name += event.unicode
             
             else:
                 if event.type == pygame.KEYUP:
