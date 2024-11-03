@@ -22,7 +22,7 @@ class Agent(player.Player):
 
     def getGrid(self, player, agents):
         # dim: (2, 11, 11)
-        grid = np.zeros((2, 11, 11))
+        self.grid = np.zeros((2, 11, 11))
         tmpTile = []
         
         for row in tile_map.tile_map[self.tiley-6:self.tiley+5]:
@@ -33,11 +33,12 @@ class Agent(player.Player):
                 tile = tmpTile[i][j]
 
                 if tile == '.': # wall 
-                    grid[0][i][j] = 1
+                    self.grid[0][i][j] = 1
                 elif tile == 'c': # candy
-                    grid[1][i][j] = 1  
+                    self.grid[1][i][j] = 1  
+            
+        
                     
-        print(agents)
         for agent in agents:
             if (
                 self.tiley-6 <= agent.tiley < self.tiley+5 and 
@@ -45,10 +46,10 @@ class Agent(player.Player):
             ):
                 if agent == self:
                     # self grid marked as 3 
-                    grid[1][6][6] = 3
+                    self.grid[1][6][6] = 3
                 else:
                     # agent grid marked as 2 
-                    grid[1][agent.tiley - self.tiley + 6][agent.tilex - self.tilex + 6] = 2
+                    self.grid[1][agent.tiley - self.tiley + 6][agent.tilex - self.tilex + 6] = 2
 
         if player:
             if (
@@ -56,9 +57,9 @@ class Agent(player.Player):
                 self.tilex-6 <= player.tilex < self.tilex+5
             ):  
                 # human player grid marked as 2
-                grid[1, player.tiley - self.tiley + 6, player.tilex - self.tiley + 6] = 2
+                self.grid[1, player.tiley - self.tiley + 6, player.tilex - self.tiley + 6] = 2
 
-        return grid
+        return self.grid
 
     def update(self, agent_group, player=None):
         self.getGrid(None, agent_group)
@@ -91,7 +92,7 @@ class Agent(player.Player):
         self.rect.y += self.speedy
         
         if self.training == True:
-            self.updateGrid()
+            self.getGrid(None, agent_group)
             x = torch.tensor(self.grid, dtype=torch.float32)
             next_action_values = self.model(x)
             next_value = torch.max(next_action_values)
