@@ -11,11 +11,11 @@ class Agent(player.Player):
     def __init__(self, images):
         super().__init__(images)
         self.grid = []
-        self.training = False
+        self.training = True
         self.model = model.model()
         self.reward = 0
         if self.training == True:
-            self.epsilon = 0.95
+            self.gamma = 0.99
             self.lr = 1e-3
             self.optimiser = torch.optim.Adam(self.model.parameters(), lr=self.lr)
 
@@ -45,11 +45,8 @@ class Agent(player.Player):
         x = torch.tensor(self.grid, dtype=torch.float32)
         action_values = self.model.forward(x)
 
-        if abs(self.speedx**2 + self.speedy**2) > 9:
-            self.reward+=1
-
         # up is 0, right is 1, down is two, left is 3
-        if random.choice(range(1, 10)) != 1:
+        if random.choice(range(1, 2)) != 1:
             direction = torch.argmax(action_values)
         else:
             direction = random.choice(range(1, 4))
@@ -74,7 +71,7 @@ class Agent(player.Player):
             next_action_values = self.model(x)
             next_value = torch.max(next_action_values)
 
-            loss = ((self.reward + self.epsilon * next_value) - value) ** 2
+            loss = ((self.reward + self.gamma * next_value) - value) ** 2
             loss.backward()
             self.optimiser.step()
             self.optimiser.zero_grad()

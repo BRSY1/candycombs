@@ -123,11 +123,6 @@ class Game:
                 config.SPEED *= 3
                 print(config.SPEED)
         
-                    
-
-        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
-        time_of_moves = []
         value = 0
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
@@ -137,9 +132,6 @@ class Game:
                     lavaTile[value] = [row_index,col_index]
                     value+=1
 
-        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
-        time_of_moves = []
         value = 0
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
@@ -285,8 +277,9 @@ class Game:
             agent.tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
             if tile_map.tile_map[agent.tiley][agent.tilex] == '.':
-                agent.speedx = 0
-                agent.speedy = 0
+                agent.speedx = random.choice(range(-20, 20))
+                agent.speedy = random.choice(range(-20, 20))
+                agent.reward -= 5
                 agent.rect.x = prevx
                 agent.rect.y = prevy
             
@@ -295,6 +288,11 @@ class Game:
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
                 agent.reward += candy_stolen
+
+            currPos = (agent.tiley, agent.tilex)
+            if currPos in self.candies:
+                agent.candy += 1
+                self.candies.remove(currPos)
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
@@ -350,7 +348,6 @@ class Game:
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
             tile_map.tile_map[r][c] = random.choice(['k','s'])
-        print (tile_map.tile_map[r][c])
 
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
