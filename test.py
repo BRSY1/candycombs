@@ -12,6 +12,17 @@ import textwrap
 end_time = time.time() + 200
 
 
+def getLocation():
+    locationx, locationy = None, None
+    for i in range(100):
+        for j in range(100):
+            if tile_map.tile_map[i][j] == 't':
+                if random.choice([range(0, 5) == 1]):
+                    locationy = j
+                    locationx = i
+                
+    return locationx, locationy
+
 class Game:
     MESSAGE_POP = pygame.USEREVENT + 1
 
@@ -21,12 +32,19 @@ class Game:
         pygame.display.set_caption("CandyCombs")
         self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
+        player_locationx = None
+        player_locationy = None
         self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
                                      ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"],
-                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"]])
-        self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
-        self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
-        self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
+                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"],
+                                     ["assets/mainCharacterFrames/mainCharcterInvisbleStanding.png","assets/mainCharacterFrames/mainCharacterInvisibleWalking.png"]],
+                                     player_locationx, player_locationy)
+        locationx, locationy = getLocation()
+        self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]], locationx, locationy)
+        locationx, locationy = getLocation()
+        self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]], locationx, locationy)
 
         self.agent_group = []
         self.agent_group.append(self.agent1) # can make this a for loop
@@ -198,7 +216,6 @@ class Game:
                 for agent in self.agent_group:
                     if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
                         candy_stolen = agent.candy // 5
-                        agent.reward -= candy_stolen
                         agent.candy -= candy_stolen
                         self.message.append(f"You just stole {candy_stolen} candy")
                         self.player.candy += candy_stolen
@@ -651,8 +668,8 @@ class Game:
             agent.tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
             if tile_map.tile_map[agent.tiley][agent.tilex] == '.':
-                agent.speedx = 0
-                agent.speedy = 0
+                agent.speedx = random.randint(-10, 10)
+                agent.speedy = random.randint(-10, 10)
                 agent.rect.x = prevx
                 agent.rect.y = prevy
             
@@ -660,7 +677,6 @@ class Game:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
-                agent.reward += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 

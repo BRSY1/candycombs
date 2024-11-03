@@ -4,7 +4,7 @@ import config
 import tile_map
 
 class Player(sprite.Sprite):
-    def __init__(self, images):
+    def __init__(self, images, locationx, locationy):
         super().__init__()
         # images
         # r: powerUp indices (e.g. default: 0, knife: 1, night_vision: 2, invisibility 3)
@@ -19,9 +19,13 @@ class Player(sprite.Sprite):
 
         self.speedx = 0
         self.speedy = 0
-
-        self.tilex = (self.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
-        self.tiley = (self.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
+        
+        if not locationx:
+            self.tilex = (self.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
+            self.tiley = (self.rect.y + config.TILE_SIZE // 4) // config.TILE_SIZE
+            
+        self.tilex = locationx
+        self.tiley = locationy
 
         self.facing_right = True
         self.is_moving = False
