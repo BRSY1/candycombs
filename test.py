@@ -6,6 +6,7 @@ import player
 import random
 import time
 import agent
+import torch
 
 end_time = time.time() + 200
 
@@ -37,7 +38,7 @@ class Game:
         self.candies = []
         self.player.powerUpIndex = -1
         self.powerUpLast = 0
-        self.powerUpCooldown = 10
+        self.powerUpCooldown = 20000
         self.time_of_moves = []
         self.vignetteColourR = 0
         self.vignetteColourG = 0
@@ -49,6 +50,8 @@ class Game:
     def handleEvent(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                if self.isTraining:
+                    torch.save(self.agent1.model.state_dict(), "trained_models/agent_model.pt")
                 self.is_running = False
 
             elif event.type == pygame.KEYUP:
@@ -72,7 +75,10 @@ class Game:
 
     def powerUp(self):
         playerXPos, playerYPos = self.player.tilex, self.player.tiley
-        if tile_map.tile_map[playerYPos][playerXPos] == 'k' or tile_map.tile_map[playerYPos][playerXPos] == 's':
+        if  (tile_map.tile_map[playerYPos][playerXPos] == 'k' or 
+            tile_map.tile_map[playerYPos][playerXPos] == 's' or 
+            tile_map.tile_map[playerYPos][playerXPos] == 'i' or 
+            tile_map.tile_map[playerYPos][playerXPos] == 'n'):
             self.pickUpPowerUp(playerYPos, playerXPos)
 
     def lavaBlock(self):
@@ -80,11 +86,10 @@ class Game:
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                #print(tile_type)
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
-        print(lavaTile[0])
+       
         for i in range(0,len(lavaTile)):
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 self.player.candy -= 5
@@ -113,6 +118,7 @@ class Game:
                 for agent in self.agent_group:
                     if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
                         candy_stolen = agent.candy // 5
+                        agent.reward -= candy_stolen
                         agent.candy -= candy_stolen
                         self.message.append(f"You just stole {candy_stolen} candy")
                         self.player.candy += candy_stolen
@@ -122,31 +128,25 @@ class Game:
             if self.player.powerUpIndex == constants.SPEED:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
-                config.SPEED *= 5
-                print(config.SPEED)
+                config.SPEED *= 3
+
+            
+                
         
                     
 
-        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
-        time_of_moves = []
         value = 0
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                #print(tile_type)
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
 
-        prevx_tile = (prevx + config.TILE_SIZE // 4) // config.TILE_SIZE
-        prevy_tile = (prevy + config.TILE_SIZE // 4) // config.TILE_SIZE
-        time_of_moves = []
-        value = 0
+                value = 0
         lavaTile = [[0, 0] for _ in range(88)]
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
-                #print(tile_type)
                 if tile_type == 'l':
                     lavaTile[value] = [row_index,col_index]
                     value+=1
@@ -163,7 +163,6 @@ class Game:
                     self.createVignetteEffect()
                     self.time_of_moves.append(current_time_2)
                 else:
-                    # print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
                     if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
                         self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
                         self.vignetteColorR = 200
@@ -296,6 +295,7 @@ class Game:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
+                agent.reward += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
@@ -351,16 +351,20 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['k','s'])
-        print (tile_map.tile_map[r][c])
-
+            tile_map.tile_map[r][c] = random.choice(['i','k','s','n']) 
+        
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
             self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion") 
+        elif tile_map.tile_map[r][c] == 'i':
+            self.player.powerUpIndex = constants.INVISIBILITY
+            self.message.append("You just got an invisibility potion!") 
+        elif tile_map.tile_map[r][c] == 'n':
+            self.player.powerUpIndex = constants.NIGHT_VISION
+            self.message.append("You just got a night vision potion!")
         tile_map.tile_map[r][c] = 'a'
 
     def messageMaintainer(self):
@@ -412,5 +416,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game()
+    game = Game(isTraining=True)
     game.run()
