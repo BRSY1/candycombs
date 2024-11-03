@@ -271,7 +271,7 @@ class Game:
         for agent in self.agent_group:
             prevx = agent.rect.x
             prevy = agent.rect.y
-            agent.update()
+            agent.update(self.player, self.agent_group)
 
             agent.tilex = (agent.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
             agent.tiley = (agent.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE

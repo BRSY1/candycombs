@@ -26,16 +26,16 @@ class Agent(player.Player):
         tmpTile = []
         
         for row in tile_map.tile_map[self.tiley-6:self.tiley+5]:
-            tmpTile.append([row][self.tilex-6:self.tilex+5])
+            tmpTile.append(row[self.tilex-6:self.tilex+5])
 
         for i in range(11):
             for j in range(11):
                 tile = tmpTile[i][j]
 
                 if tile == '.': # wall 
-                    self.grid[0, i, j] = 1
+                    self.grid[0][i][j] = 1
                 elif tile == 'c': # candy
-                    self.grid[1, i, j] = 1  
+                    self.grid[1][i][j] = 1  
                     
         for agent in agents:
             if (
@@ -44,10 +44,10 @@ class Agent(player.Player):
             ):
                 if agent == self:
                     # self grid marked as 3 
-                    self.grid[1, 6, 6] = 3
+                    self.grid[1][6][6] = 3
                 else:
                     # agent grid marked as 2 
-                    self.grid[1, agent.tiley - self.tiley + 6, agent.tilex - self.tilex + 6] = 2
+                    self.grid[1][agent.tiley - self.tiley + 6][agent.tilex - self.tilex + 6] = 2
 
         if player:
             if (
@@ -59,8 +59,8 @@ class Agent(player.Player):
 
         return grid
 
-    def update(self):
-        self.updateGrid()
+    def update(self, agent_group, player=None):
+        self.getGrid(None, agent_group)
         self.is_moving = True
         if self.speedx > 0: self.facing_right = True
         else: self.facing_right = False
