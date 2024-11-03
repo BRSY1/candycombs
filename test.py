@@ -20,10 +20,12 @@ class Game:
         self.player = player.Player("assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png")
         self.agent1 = agent.Agent("assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png")
         self.agent2 = agent.Agent("assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png")
+        self.agent3 = agent.Agent("assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png")
 
         self.agent_group = []
         self.agent_group.append(self.agent1) # can make this a for loop
         self.agent_group.append(self.agent2)
+        self.agent_group.append(self.agent3)
         
         self.offsetx = 0
         self.offsety = 0
