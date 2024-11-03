@@ -23,8 +23,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.player = player.Player([["assets/mainCharacterFrames/mainCharacterStanding1.png", "assets/mainCharacterFrames/mainCharacterWalking.png"],
                                      ["assets/mainCharacterFrames/mainCharacterKnifeStanding.png", "assets/mainCharacterFrames/mainCharacterKnifeWalking.png", "assets/mainCharacterFrames/mainCharacterKnifeStabbing.png"],
-                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"],
-                                     ["assets/mainCharacterFrames/mainCharcterInvisbleStanding.png","assets/mainCharacterFrames/mainCharacterInvisibleWalking.png"]])
+                                     ["assets/mainCharacterFrames/mainCharacterStarlightStanding.png", "assets/mainCharacterFrames/mainCharacterStartlightWalking.png"]])
         self.agent1 = agent.Agent([["assets/marvoloWizardFrames/marvoloStanding.png", "assets/marvoloWizardFrames/marvoloFloating.png"]])
         self.agent2 = agent.Agent([["assets/grubby10YrOld/grubby10YrOldStanding.png", "assets/grubby10YrOld/grubby10YrOldWalking.png"]])
         self.agent3 = agent.Agent([["assets/minotaur/minotaurStanding.png", "assets/minotaur/minotaurWalking.png"]])
@@ -47,8 +46,6 @@ class Game:
         self.vignetteColourG = 0
         self.vignetteColourB = 0
         self.message = []
-        self.exit = 0
-        self.randomQuestion = random.randint(0,4)
 
         self.isTraining = isTraining
 
@@ -56,9 +53,64 @@ class Game:
         self.easyTile_activ = 0
         self.mediumTileTil_activ = 0
         self.hardTile_activ = 0
-        self.casinoTile_activ = 0
-        self
+
+        self.easyTile = [[0, 0],[0,0]]
+        self.mediumTile = [[0, 0],[0,0]]
+        self.hardTile = [[0, 0],[0,0]]
         self.lavaTile = [[0, 0] for _ in range(88)]
+
+        self.is_load_screen = True
+        #self.player_name = ""
+        self.font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 74)
+        self.title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 100)
+
+    def displayLoadScreen(self):
+
+        self.screen.fill((0,0,0))
+
+        # title_text = self.title_font.render("CandyCombs", True, (0, 0, 0))
+        # how_to_play_text = self.font.render("How to Play", True, (50, 50, 50))
+        # movement_text = self.font.render("Movement : Arrows", True, (50, 50, 50))
+        # open_chest_text = self.font.render("Open Chest : O", True, (50, 50, 50))
+        # use_power_up_text = self.font.render("Use Power Up : Space ", True, (50, 50, 50))
+
+        # self.screen.blit(title_text, (config.SCREEN_WIDTH // 2 - title_text.get_width() // 2, 100))
+        # self.screen.blit(how_to_play_text, (config.SCREEN_WIDTH // 2 - how_to_play_text.get_width() // 2, 200))
+        
+        # instruction_y_offset = 300
+        # self.screen.blit(movement_text, (config.SCREEN_WIDTH // 2 - movement_text.get_width() // 2, instruction_y_offset))
+        # self.screen.blit(open_chest_text, (config.SCREEN_WIDTH // 2 - open_chest_text.get_width() // 2, instruction_y_offset + 75))
+        # self.screen.blit(use_power_up_text, (config.SCREEN_WIDTH // 2 - use_power_up_text.get_width() // 2, instruction_y_offset + 150))
+        instructions_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
+        title_text = self.title_font.render("CandyCombs", True, (255, 255, 255))  # Black
+        #how_to_play_text = self.font.render("How to Play", True, (169, 169, 169))  # Dark Grey
+        movement_text = instructions_font.render("Movement : Arrows", True, (255, 165, 0))  # Orange
+        open_chest_text = instructions_font.render("Open Chest : O", True, (255, 165, 0))  # Orange
+        use_power_up_text = instructions_font.render("Use Power Up : Space", True, (255, 165, 0))  # Orange
+
+        # Game objectives in grey
+        game_objective_text = self.font.render("Steal as much candy as you can", True, (0, 0, 0))  # Dark Grey
+        enter_text = self.font.render("Click Enter to Start", True, (255, 255, 255))  # Dark Grey
+
+        # Blit texts onto the screen with adjusted spacing
+        self.screen.blit(title_text, (config.SCREEN_WIDTH // 2 - title_text.get_width() // 2, 200))
+        # self.screen.blit(how_to_play_text, (config.SCREEN_WIDTH // 2 - how_to_play_text.get_width() // 2, 350))
+        
+        # Add spacing by adjusting y-coordinates for each instruction
+        self.screen.blit(movement_text, (config.SCREEN_WIDTH // 2 - movement_text.get_width() // 2, 400))
+        self.screen.blit(open_chest_text, (config.SCREEN_WIDTH // 2 - open_chest_text.get_width() // 2, 475))  # 50 pixels below
+        self.screen.blit(use_power_up_text, (config.SCREEN_WIDTH // 2 - use_power_up_text.get_width() // 2, 550))  # 100 pixels below
+
+        # Add game objective and start instruction at the bottom
+        self.screen.blit(game_objective_text, (config.SCREEN_WIDTH // 2 - game_objective_text.get_width() // 2, 600))
+        self.screen.blit(enter_text, (config.SCREEN_WIDTH // 2 - enter_text.get_width() // 2, 675))
+
+
+        pygame.display.flip()
+
+#Movement - arrows
+#Open Chest = O
+#Use power up = Space (_)
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -67,24 +119,34 @@ class Game:
                     torch.save(self.agent1.model.state_dict(), "trained_models/agent_model.pt")
                 self.is_running = False
 
-            elif event.type == pygame.KEYUP:
-                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
-                    self.player.stop()
+            if self.is_load_screen:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        self.is_load_screen = False
+                        global end_time
+                        end_time = time.time() + 300
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.player_name = self.player_name[:-1]
+                    else:
+                        self.player_name += event.unicode
+            
+            else:
+                if event.type == pygame.KEYUP:
+                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                        self.player.stop()
 
-                playerXPos, playerYPos = self.player.tilex, self.player.tiley
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
-                    self.openChest(playerYPos, playerXPos)
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
-                    self.easyTile_activ = 1
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
-                    self.mediumTileTil_activ = 1
-                if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
-                    self.hardTile_activ = 1
-                if event.key == pygame.K_o and (tile_map.tile_map[playerYPos][playerXPos] == '1' or tile_map.tile_map[playerYPos][playerXPos] == '2' or tile_map.tile_map[playerYPos][playerXPos] == '3' or tile_map.tile_map[playerYPos][playerXPos] == '4'):
-                    self.casinoTile_activ = 1
-            elif event.type == game.MESSAGE_POP:
-                if self.message:
-                    self.message.pop(0)
+                    playerXPos, playerYPos = self.player.tilex, self.player.tiley
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 't':
+                        self.openChest(playerYPos, playerXPos)
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'e':
+                        self.easyTile_activ = 1
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'm':
+                        self.mediumTileTil_activ = 1
+                    if event.key == pygame.K_o and tile_map.tile_map[playerYPos][playerXPos] == 'h':
+                        self.hardTile_activ = 1
+                elif event.type == game.MESSAGE_POP:
+                    if self.message:
+                        self.messagePop()
 
 
     def is_walkable(self, tilex, tiley):
@@ -155,12 +217,7 @@ class Game:
                 self.powerUpLast = pygame.time.get_ticks()
                 self.player.powerUpIndex = -1
                 self.player.night_vis = True
-            
-            if self.player.powerUpIndex == constants.INVISIBILITY:
-                self.powerUpLast = pygame.time.get_ticks()
-                self.player.powerUpIndex = -1
-                self.player.is_invisible = True
-            
+                
             
             
                 
@@ -186,6 +243,27 @@ class Game:
         self.player.tilex = (self.player.rect.x + config.TILE_SIZE // 4) // config.TILE_SIZE
         self.player.tiley = (self.player.rect.y + config.TILE_SIZE // 2) // config.TILE_SIZE
 
+        '''
+        current_time_2 = time.time()
+        for i in range(0,len(lavaTile)):
+            if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
+                if len(self.time_of_moves) < 2:
+                    self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                    self.vignetteColorR = 200
+                    self.createVignetteEffect()
+                    self.time_of_moves.append(current_time_2)
+                else:
+                    if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
+                        self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                        self.vignetteColorR = 200
+                        self.createVignetteEffect()
+                        self.time_of_moves.append(current_time_2)
+                # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
+                # self.vignetteColorR = 255
+                # self.createVignetteEffect()
+            else:
+                self.vignetteColorR = 0
+        '''
         # Check for collision with walls
         if not self.is_walkable(self.player.tilex, self.player.tiley):
             # Revert to previous position if not walkable
@@ -219,6 +297,12 @@ class Game:
                 if tile_type == 'l':
                     self.lavaTile[valueLava] = [row_index,col_index]
                     valueLava+=1
+                if tile_type == 'e':
+                    self.easyTile[valueEasy] = [row_index,col_index]
+                if tile_type == 'm':
+                    self.easyTile[valueMedium] = [row_index,col_index]
+                if tile_type == 'h':
+                    self.easyTile[valueHard] = [row_index,col_index]
 
 
     def lavaTileActivation(self):
@@ -502,10 +586,9 @@ class Game:
         now = pygame.time.get_ticks()
         if now - self.powerUpLast > self.powerUpCooldown:
             config.SPEED = config.BASESPEED
-            self.player.night_vis = False
-            self.player.is_invisible = False
+            self.night_vis = False
             
-            
+        
 
     def createVignetteEffect(self):
         visionSurface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -521,9 +604,10 @@ class Game:
         box_width = (config.SCREEN_WIDTH/2) - 200 
         box_height = 50
         #powerUps_file_location = ("","","","","")
-        countdown_time = 200
+        countdown_time = 300
         current_time = time.time()
-        remaining_time = end_time - current_time
+        if self.is_load_screen == False:
+            remaining_time = end_time - current_time
 
         time_amount = 3
         candy_collected = self.player.candy
@@ -596,7 +680,7 @@ class Game:
                 agent.rect.x = prevx
                 agent.rect.y = prevy
             
-            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1 and not self.player.is_invisible:
+            if agent.tilex == self.player.tilex and agent.tiley == self.player.tiley and random.randint(1, 10) == 1:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
@@ -607,23 +691,26 @@ class Game:
     def run(self):
         while self.is_running:
             self.clock.tick(config.FPS)
-            self.drawTileMap()
-            self.move()
-            self.tileFinding()
-            self.lavaTileActivation()
-            self.player.updateAnimation()
-            self.moveAgents()
             self.handleEvent()
-            if not self.player.night_vis:
-                self.createVignetteEffect()
-            self.quizTiles()
-            self.casinoTiles()
-            self.valuables_UI()
-            self.powerUp()
-            self.resetPowerUps()
-            self.messageMaintainer()
-            self.messageBox()
-            pygame.display.flip()
+            if self.is_load_screen:
+                self.displayLoadScreen()
+            else:
+                self.drawTileMap()
+                self.move()
+                self.tileFinding()
+                self.lavaTileActivation()
+                self.quizTiles()
+                self.player.updateAnimation()
+                self.moveAgents()
+                if not self.player.night_vis:
+                    self.createVignetteEffect()
+                if self.is_load_screen == False:
+                    self.valuables_UI()
+                self.powerUp()
+                self.resetPowerUps()
+                self.messageMaintainer()
+                self.messageBox()
+                pygame.display.flip()
 
     def drawTileMap(self):
         offset_x, offset_y = self.getOffset()
@@ -653,6 +740,8 @@ class Game:
                 candy_y = pos[0] * config.TILE_SIZE - offset_y
                 self.screen.blit(candy_image, (candy_x, candy_y))
 
+    
+
     def generateCandies(self):
         for row_index, row in enumerate(tile_map.tile_map):
             for col_index, tile_type in enumerate(row):
@@ -661,15 +750,14 @@ class Game:
 
     def openChest(self, r, c):
         if self.player.powerUpIndex == -1:
-            tile_map.tile_map[r][c] = random.choice(['i','n','k','s']) 
+            tile_map.tile_map[r][c] = random.choice(['n']) #'i','k','s',
         
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife!") 
+            self.message.append("You just got a candy knife") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
-            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 
@@ -680,7 +768,30 @@ class Game:
 
     def messageMaintainer(self):
         if len(self.message) == 4:
-            self.message.pop(0)
+            self.messagePop()
+    
+    def messagePop(self):
+        if len(self.message) == 4:
+            temp3 = self.message[3]
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+            self.message[2] = temp3
+        elif len(self.message) == 3:
+            temp2 = self.message[2]
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+            self.message[1] = temp2
+        elif len(self.message) == 2:
+            temp1 = self.message[1]
+            self.message.pop()
+            self.message[0] = temp1
+        elif len(self.message) == 1:
+            self.message = [""]
+
 
     def messageBox(self):
         i = config.SCREEN_HEIGHT
