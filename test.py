@@ -143,15 +143,20 @@ class Game:
         for i in range(0,len(lavaTile)):
             if (self.player.tiley == lavaTile[i][0]) and (self.player.tilex == lavaTile[i][1]):
                 if len(self.time_of_moves) < 2:
-                    self.player.candy -= 5
-                    self.vignetteColorR = 255
+                    self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                    self.vignetteColorR = 200
+                    self.createVignetteEffect()
                     self.time_of_moves.append(current_time_2)
                 else:
-                    print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
+                    # print(self.time_of_moves[len(self.time_of_moves)-1],current_time_2)
                     if ((self.time_of_moves[len(self.time_of_moves)-1] - current_time_2) < -1):
-                        self.player.candy -= 5
-                        self.vignetteColorR = 255
+                        self.player.candy -= 5 if self.player.candy > 5 else self.player.candy
+                        self.vignetteColorR = 200
+                        self.createVignetteEffect()
                         self.time_of_moves.append(current_time_2)
+                # UNCOMMENT IF YOU WANT FULL RED & FLASH RATHER THAN JUST FLASH ON DMG TICK
+                # self.vignetteColorR = 255
+                # self.createVignetteEffect()
             else:
                 self.vignetteColorR = 0
         # Check for collision with walls
@@ -241,8 +246,8 @@ class Game:
         # render current powerup
         if self.powerUpIndex != -1:
             powerUpImage = tile_map.powerUps[self.powerUpIndex]
-            scaledPowerupImage = pygame.transform.scale(powerUpImage, (powerup_ui.get_width() * 5, powerup_ui.get_height() * 5))
-            self.screen.blit(scaledPowerupImage, (config.SCREEN_WIDTH-(17 * 12), 50))
+            scaledPowerupImage = pygame.transform.scale(powerUpImage, (powerup_ui.get_width() * 6, powerup_ui.get_height() * 6))
+            self.screen.blit(scaledPowerupImage, (config.SCREEN_WIDTH-(19 * 12), 45))
 
 
         #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])

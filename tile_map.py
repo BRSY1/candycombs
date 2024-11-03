@@ -86,9 +86,8 @@ tiles = {
     't': chest_floor,
     'k': candy_knife,
     's' : speed,
-
-    '1': light_wall, #top left
-    '2': light_wall, #top right
-    '3': light_wall, #bottom left
-    '4': light_wall #bottom right
+    '1': diamond, #top left
+    '2': spade, #top right
+    '3': club, #bottom left
+    '4': heart #bottom right
 }
