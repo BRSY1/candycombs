@@ -6,12 +6,13 @@ import player
 import random
 import time
 import agent
+import torch
 
 end_time = time.time() + 200
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, isTraining=False):
         pygame.init()
         self.is_running = True
         pygame.display.set_caption("CandyCombs")
@@ -42,9 +43,13 @@ class Game:
         self.vignetteColourB = 0
         self.message = [""]
 
+        self.isTraining = isTraining
+
     def handleEvent(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                if self.isTraining:
+                    torch.save(self.agent1.model.state_dict(), "trained_models/agent_model.pt")
                 self.is_running = False
 
             elif event.type == pygame.KEYUP:
@@ -108,6 +113,7 @@ class Game:
                 for agent in self.agent_group:
                     if self.player.tilex == agent.tilex and self.player.tiley == agent.tiley:
                         candy_stolen = agent.candy // 5
+                        agent.reward -= candy_stolen
                         agent.candy -= candy_stolen
                         self.player.candy += candy_stolen
                         self.player.powerUpIndex = -1
@@ -283,6 +289,7 @@ class Game:
                 candy_stolen = self.player.candy // 5
                 self.player.candy -= candy_stolen
                 agent.candy += candy_stolen
+                agent.reward += candy_stolen
             
             self.screen.blit(agent.image, (agent.rect.x - self.offsetx, agent.rect.y - self.offsety))
 
@@ -375,5 +382,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game()
+    game = Game(isTraining=True)
     game.run()
