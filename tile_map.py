@@ -89,6 +89,14 @@ skull = pygame.transform.scale(skull, (config.TILE_SIZE, config.TILE_SIZE))
 spiderWeb= pygame.image.load("assets/decorations/skullAndBone.png")
 spiderWeb= pygame.transform.scale(spiderWeb, (config.TILE_SIZE, config.TILE_SIZE))
 
+witchesHat = pygame.image.load("assets/decorations/updatedWitchesHat.png")
+witchesHat= pygame.transform.scale(witchesHat, (config.TILE_SIZE, config.TILE_SIZE))
+
+cauldron = pygame.image.load("assets/decorations/updatedCauldron.png")
+cauldron= pygame.transform.scale(cauldron, (config.TILE_SIZE, config.TILE_SIZE))
+
+
+
 powerUps = {
     constants.KNIFE: candy_knife_ui,
     constants.SPEED: speed_ui,
@@ -123,5 +131,7 @@ tiles = {
     'w': orb,
     'x': skull,
     'y': spiderWeb,
+    'z': witchesHat,
+    'Z': cauldron
     
 }

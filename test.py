@@ -240,6 +240,11 @@ class Game:
                 # self.createVignetteEffect()
 
     def quizTiles(self):
+        easy = constants.easy_questions
+        medium = constants.medium_questions
+        hard = constants.hard_questions
+
+
         if (self.easyTile_activ == 1) or (self.mediumTileTil_activ == 1) or (self.hardTile_activ == 1):
             trivia_ui = pygame.image.load("assets/ui/trivia.png")
             scaled_trivia_ui = pygame.transform.scale(trivia_ui, (trivia_ui.get_width() * 22, trivia_ui.get_height()*20))
@@ -448,9 +453,10 @@ class Game:
     def pickUpPowerUp(self, r, c):
         if tile_map.tile_map[r][c] == 'k':
             self.player.powerUpIndex = constants.KNIFE
-            self.message.append("You just got a candy knife") 
+            self.message.append("You just got a candy knife!") 
         elif tile_map.tile_map[r][c] == 's':
             self.player.powerUpIndex = constants.SPEED
+            self.message.append("You just got a speed potion!") 
         elif tile_map.tile_map[r][c] == 'i':
             self.player.powerUpIndex = constants.INVISIBILITY
             self.message.append("You just got an invisibility potion!") 
