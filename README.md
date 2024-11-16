@@ -1,6 +1,12 @@
 # Candycombs
 A 2D Halloween-themed game featuring various mini-games. Players collect candies by exploring rooms, answering trivia questions, trying their luck at the roulette table, and opening chests to gain power-ups.
 
+
+https://github.com/user-attachments/assets/a586758a-879b-4a5c-bf36-8350998d2120
+
+
+
+
 ## Installation
 
 ```sh
