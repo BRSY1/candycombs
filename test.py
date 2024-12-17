@@ -99,9 +99,7 @@ class Game:
         self.message = []
         self.exit = 0
         self.randomQuestion = random.randint(0,4)
-
         self.isTraining = isTraining
-
         self.time_of_moves = 0
         self.easyTile_activ = 0
         self.mediumTileTil_activ = 0
@@ -109,12 +107,10 @@ class Game:
         self.casinoTile_activ = 0
         self.casino_op1 = 0
         self.casino_reward = 0
-
         self.easyTile = [[0, 0],[0,0]]
         self.mediumTile = [[0, 0],[0,0]]
         self.hardTile = [[0, 0],[0,0]]
         self.lavaTile = [[0, 0] for _ in range(88)]
-
         self.animation_time = 0
         self.animation_type = 0
         self.animation = 0
@@ -123,25 +119,9 @@ class Game:
         self.title_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 100)
 
     def displayLoadScreen(self):
-
         self.screen.fill((0,0,0))
-
-        # title_text = self.title_font.render("CandyCombs", True, (0, 0, 0))
-        # how_to_play_text = self.font.render("How to Play", True, (50, 50, 50))
-        # movement_text = self.font.render("Movement : Arrows", True, (50, 50, 50))
-        # open_chest_text = self.font.render("Open Chest : O", True, (50, 50, 50))
-        # use_power_up_text = self.font.render("Use Power Up : Space ", True, (50, 50, 50))
-
-        # self.screen.blit(title_text, (config.SCREEN_WIDTH // 2 - title_text.get_width() // 2, 100))
-        # self.screen.blit(how_to_play_text, (config.SCREEN_WIDTH // 2 - how_to_play_text.get_width() // 2, 200))
-        
-        # instruction_y_offset = 300
-        # self.screen.blit(movement_text, (config.SCREEN_WIDTH // 2 - movement_text.get_width() // 2, instruction_y_offset))
-        # self.screen.blit(open_chest_text, (config.SCREEN_WIDTH // 2 - open_chest_text.get_width() // 2, instruction_y_offset + 75))
-        # self.screen.blit(use_power_up_text, (config.SCREEN_WIDTH // 2 - use_power_up_text.get_width() // 2, instruction_y_offset + 150))
         instructions_font = pygame.font.Font("assets/fonts/PixemonTrialRegular-p7nLK.ttf", 40)
         title_text = self.title_font.render("CandyCombs", True, (255, 255, 255))  # Black
-        #how_to_play_text = self.font.render("How to Play", True, (169, 169, 169))  # Dark Grey
         movement_text = instructions_font.render("Movement : Arrows", True, (255, 165, 0))  # Orange
         open_chest_text = instructions_font.render("Open Chest : O", True, (255, 165, 0))  # Orange
         use_power_up_text = instructions_font.render("Use Power Up : Space", True, (255, 165, 0))  # Orange
@@ -166,9 +146,6 @@ class Game:
 
         pygame.display.flip()
 
-#Movement - arrows
-#Open Chest = O
-#Use power up = Space (_)
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -257,7 +234,7 @@ class Game:
             self.player.moveLeft()
         if keys[pygame.K_RIGHT]:
             self.player.moveRight()
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP]: 
             self.player.moveUp()
         if keys[pygame.K_DOWN]:
             self.player.moveDown()
@@ -292,9 +269,6 @@ class Game:
                 self.player.is_invisible = True
             
             
-                
-        
-                    
 
         value = 0
         lavaTile = [[0, 0] for _ in range(88)]
@@ -617,13 +591,6 @@ class Game:
             self.exit = 0
 
 
-            
-
-
-            
-
-
-
     def casinoTiles(self):
         top = 450
         left = 180
@@ -768,10 +735,6 @@ class Game:
             scaledPowerupImage = pygame.transform.scale(powerUpImage, (powerup_ui.get_width() * 6, powerup_ui.get_height() * 6))
             self.screen.blit(scaledPowerupImage, (config.SCREEN_WIDTH-(19 * 12), 45))
 
-
-        #powerUps_image = pygame.image.load(powerUps_file_location[powerUp_index])
-        #scaled_power_image = pygame.transform.scale(powerUps_image, (powerUps_image.get_width() * 4, powerUps_image.get_height() * 4))
-        #self.screen.blit(scaled_power_image, (config.SCREEN_WIDTH-20,20))
 
     def getOffset(self):
         offsetx = self.player.rect.x - config.SCREEN_WIDTH // 2 + config.TILE_SIZE // 2
@@ -967,13 +930,6 @@ class Game:
                 pygame.display.flip()
 
 
-
-#def draw_bar(screen, coins_collected, max_coins):
-#    pygame.draw.rect(screen, BLACK, (*BAR_POS, BAR_WIDTH, BAR_HEIGHT), 2)  # Border
-#    fill_width = (coins_collected / max_coins) * (BAR_WIDTH - 4)  # -4 for padding
-#    pygame.draw.rect(screen, GREEN, (BAR_POS[0] + 2, BAR_POS[1] + 2, fill_width, BAR_HEIGHT - 4))  # Filled portion
-#    text = font.render(f"Coins: {coins_collected}/{max_coins}", True, BLACK)
-#    screen.blit(text, (BAR_POS[0] + 5, BAR_POS[1] - 25))  # Above the bar
 
 
 if __name__ == "__main__":
